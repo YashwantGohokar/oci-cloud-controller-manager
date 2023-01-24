@@ -16,16 +16,21 @@ package csioptions
 
 import (
 	"flag"
+	"go.uber.org/zap"
 	"strings"
 	"time"
-
-	"go.uber.org/zap"
 )
 
 const (
 	fssAddressSuffix            = "-fss.sock"
 	fssVolumeNameAppendedPrefix = "-fss"
+	// Enable usage of Provision of PVCs from snapshots in other namespaces
+	CrossNamespaceVolumeDataSource = "CrossNamespaceVolumeDataSource"
 )
+
+var crossNamespaceVolumeDataSource = map[string]bool{ // Map literal
+	CrossNamespaceVolumeDataSource: false,
+}
 
 // CSIOptions structure which contains flag values
 type CSIOptions struct {
@@ -106,4 +111,11 @@ func GetFssAddress(csiAddress, defaultAddress string) string {
 // GetFssVolumeNamePrefix returns the fssVolumeNamePrefix based on csiVolumeNamePrefix
 func GetFssVolumeNamePrefix(csiVolumeNamePrefix string) string {
 	return csiVolumeNamePrefix + fssVolumeNameAppendedPrefix
+}
+
+func CSIfeatureGates(FeatureGate map[string]bool) map[string]bool {
+	for key, value := range crossNamespaceVolumeDataSource {
+		FeatureGate[key] = value
+	}
+	return FeatureGate
 }
