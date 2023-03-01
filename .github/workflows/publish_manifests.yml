@@ -1,11 +1,15 @@
 name: Publish Manifests
 
 on:
-  workflow_dispatch:
-    inputs:
-      version:
-        description: 'Version Number'
-        required: true
+  push:
+    # Build and publish artifacts for a release
+    tags:
+      - "v*.*.*"
+#  workflow_dispatch:
+#    inputs:
+#      version:
+#        description: 'Version Number'
+#        required: true
 
 jobs:
   build:
@@ -15,13 +19,13 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Make
-      run: VERSION=${{ github.event.inputs.version_number }} make manifests
+      run: VERSION=$GITHUB_REF_NAME make manifests
     - name: Upload Manifests to release
       uses: svenstaro/upload-release-action@v2
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
-        file: v${{ github.event.inputs.version_number }}/*
+        file: $GITHUB_REF_NAME/*
 #       asset_name: mything
-        tag: v${{ github.event.inputs.version_number }}
+        tag: $GITHUB_REF_NAME
         overwrite: true
         body: "This is my release text"
