@@ -5,11 +5,11 @@ on:
     # Build and publish artifacts for a release
     tags:
       - "v*.*.*"
-#  workflow_dispatch:
-#    inputs:
-#      version:
-#        description: 'Version Number'
-#        required: true
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version Number'
+        required: true
 
 jobs:
   build:
@@ -19,13 +19,13 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Make
-      run: VERSION=$GITHUB_REF_NAME make manifests
+      run: VERSION=${{ github.ref_name }} make manifests
     - name: Upload Manifests to release
       uses: svenstaro/upload-release-action@v2
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
-        file: $GITHUB_REF_NAME/*
+        file: ${{ github.ref_name }}/*
 #       asset_name: mything
-        tag: $GITHUB_REF_NAME
+        tag: ${{ github.ref_name }}
         overwrite: true
         body: "This is my release text"
