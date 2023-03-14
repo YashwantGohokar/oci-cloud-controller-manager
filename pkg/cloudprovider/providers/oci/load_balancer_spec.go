@@ -634,10 +634,20 @@ func getHealthChecker(svc *v1.Service) (*client.GenericHealthChecker, error) {
 		return nil, err
 	}
 
+	// Default healthcheck protocol is set to HTTP
+	isForcePlainText := false
+
+	// HTTP healthcheck for HTTPS backends
+	_, ok := svc.Annotations[ServiceAnnotationLoadBalancerTLSBackendSetSecret]
+	if ok {
+		isForcePlainText = true
+	}
+
 	checkPath, checkPort := apiservice.GetServiceHealthCheckPathPort(svc)
 	if checkPath != "" {
 		return &client.GenericHealthChecker{
 			Protocol:         lbNodesHealthCheckProto,
+			IsForcePlainText: common.Bool(isForcePlainText),
 			UrlPath:          &checkPath,
 			Port:             common.Int(int(checkPort)),
 			Retries:          &retries,
@@ -649,6 +659,7 @@ func getHealthChecker(svc *v1.Service) (*client.GenericHealthChecker, error) {
 
 	return &client.GenericHealthChecker{
 		Protocol:         lbNodesHealthCheckProto,
+		IsForcePlainText: common.Bool(isForcePlainText),
 		UrlPath:          common.String(lbNodesHealthCheckPath),
 		Port:             common.Int(lbNodesHealthCheckPort),
 		Retries:          &retries,

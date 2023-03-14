@@ -59,6 +59,7 @@ require (
 	k8s.io/cloud-provider v0.24.1
 	k8s.io/component-base v0.24.1
 	k8s.io/component-helpers v0.24.1
+	k8s.io/controller-manager v0.24.1 // indirect
 	k8s.io/klog v1.0.0
 	k8s.io/klog/v2 v2.60.1
 	k8s.io/kubelet v0.24.1 // indirect
@@ -159,7 +160,6 @@ require (
 	gopkg.in/ini.v1 v1.62.0 // indirect
 	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	k8s.io/controller-manager v0.24.1 // indirect
 	k8s.io/kube-openapi v0.0.0-20220401212409-b28bf2818661 // indirect
 	k8s.io/kube-scheduler v0.0.0 // indirect
 	k8s.io/kubectl v0.0.0 // indirect
