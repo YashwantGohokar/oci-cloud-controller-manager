@@ -39,6 +39,8 @@ require (
 	github.com/container-storage-interface/spec v1.6.0
 	github.com/golang/protobuf v1.5.2
 	github.com/kubernetes-csi/csi-lib-utils v0.11.0
+	github.com/kubernetes-csi/external-resizer v0.0.0-20220615155319-a76b4d2afe86 // v1.5.0
+	github.com/kubernetes-csi/external-snapshotter/client/v6 v6.0.1
 	github.com/onsi/ginkgo v1.16.5
 	github.com/onsi/gomega v1.17.0
 	github.com/pkg/errors v0.9.1
@@ -69,7 +71,12 @@ require (
 	sigs.k8s.io/sig-storage-lib-external-provisioner/v8 v8.0.0
 )
 
-require github.com/oracle/oci-go-sdk/v65 v65.40.1
+require (
+	github.com/kubernetes-csi/external-snapshotter/v6 v6.0.1
+	github.com/oracle/oci-go-sdk/v65 v65.40.1
+	google.golang.org/protobuf v1.28.0
+	k8s.io/apiextensions-apiserver v0.24.1
+)
 
 require (
 	github.com/Azure/go-ansiterm v0.0.0-20210617225240-d185dfc1b5a1 // indirect
@@ -155,7 +162,6 @@ require (
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto v0.0.0-20220405205423-9d709892a2bf // indirect
-	google.golang.org/protobuf v1.28.0 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/ini.v1 v1.62.0 // indirect
 	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 // indirect
