@@ -27,6 +27,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/wait"
 	"k8s.io/client-go/informers"
+	testclient "k8s.io/client-go/kubernetes/fake"
 
 	providercfg "github.com/oracle/oci-cloud-controller-manager/pkg/cloudprovider/providers/oci/config"
 	"github.com/oracle/oci-cloud-controller-manager/pkg/oci/client"
@@ -1026,6 +1027,13 @@ func TestCloudProvider_EnsureLoadBalancerDeleted(t *testing.T) {
 		logger:        zap.S(),
 		instanceCache: &mockInstanceCache{},
 		metricPusher:  nil,
+		kubeclient: testclient.NewSimpleClientset(
+			&v1.Service{
+				ObjectMeta: metav1.ObjectMeta{
+					Name: "testservice", Namespace: "kube-system",
+				},
+			}),
+		lbLocks: NewLoadBalancerLocks(),
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -73,6 +73,8 @@ type CloudProvider struct {
 	logger        *zap.SugaredLogger
 	instanceCache cache.Store
 	metricPusher  *metrics.MetricPusher
+
+	lbLocks *loadBalancerLocks
 }
 
 func (cp *CloudProvider) InstancesV2() (cloudprovider.InstancesV2, bool) {
@@ -140,6 +142,7 @@ func NewCloudProvider(config *providercfg.Config) (cloudprovider.Interface, erro
 		logger:        logger.Sugar(),
 		instanceCache: cache.NewTTLStore(instanceCacheKeyFn, time.Duration(24)*time.Hour),
 		metricPusher:  metricPusher,
+		lbLocks:       NewLoadBalancerLocks(),
 	}, nil
 }
 
