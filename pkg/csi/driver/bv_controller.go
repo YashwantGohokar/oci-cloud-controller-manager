@@ -15,7 +15,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	kubeAPI "k8s.io/api/core/v1"
-	apierrors "k8s.io/apimachinery/pkg/api/errors"
+	k8sapierrors "k8s.io/apimachinery/pkg/api/errors"
 
 	"github.com/oracle/oci-cloud-controller-manager/pkg/cloudprovider/providers/oci/config"
 	csi_util "github.com/oracle/oci-cloud-controller-manager/pkg/csi-util"
@@ -39,13 +39,13 @@ const (
 	attachmentTypeParavirtualized = "paravirtualized"
 	initialFreeformTagsOverride   = "oci.oraclecloud.com/initial-freeform-tags-override"
 	initialDefinedTagsOverride    = "oci.oraclecloud.com/initial-defined-tags-override"
-	backupType					  = "backupType"
-	backupTypeFull				  = "full"
-	backupTypeIncremental	      = "incremental"
-	backupDefinedTags    		  = "oci.oraclecloud.com/defined-tags"
-	backupFreeformTags   		  = "oci.oraclecloud.com/freeform-tags"
+	backupType                    = "backupType"
+	backupTypeFull                = "full"
+	backupTypeIncremental         = "incremental"
+	backupDefinedTags             = "oci.oraclecloud.com/defined-tags"
+	backupFreeformTags            = "oci.oraclecloud.com/freeform-tags"
 	newBackupAvailableTimeout     = 45 * time.Second
-	needResize			          = "needResize"
+	needResize                    = "needResize"
 	newSize                       = "newSize"
 	//device is the consistent device path that would be used for paravirtualized attachment
 	device = "device"
@@ -150,7 +150,7 @@ func extractVolumeParameters(log *zap.SugaredLogger, parameters map[string]strin
 
 func extractSnapshotParameters(parameters map[string]string) (SnapshotParameters, error) {
 	p := SnapshotParameters{
-		backupType: core.CreateVolumeBackupDetailsTypeIncremental,	//Default backupType is incremental
+		backupType: core.CreateVolumeBackupDetailsTypeIncremental, //Default backupType is incremental
 	}
 	for k, v := range parameters {
 		switch k {
@@ -264,12 +264,12 @@ func (d *BlockVolumeControllerDriver) CreateVolume(ctx context.Context, req *csi
 		id := srcSnapshot.GetSnapshotId()
 		volumeBackup, err := d.client.BlockStorage().GetVolumeBackup(ctx, id)
 		if err != nil {
-			if apierrors.IsNotFound(err) {
+			if k8sapierrors.IsNotFound(err) {
 				log.Errorf("Failed to get snapshot with ID %v", id)
-				return nil, status.Errorf(codes.NotFound,"Failed to get snapshot with ID %v", id)
+				return nil, status.Errorf(codes.NotFound, "Failed to get snapshot with ID %v", id)
 			}
 			log.Errorf("Failed to fetch snapshot with ID %v with error %v", id, err)
-			return nil, status.Errorf(codes.Internal,"Failed to fetch snapshot with ID %v with error %v", id, err)
+			return nil, status.Errorf(codes.Internal, "Failed to fetch snapshot with ID %v with error %v", id, err)
 		}
 
 		volumeBackupSize := *volumeBackup.SizeInMBs * client.MiB
@@ -436,17 +436,22 @@ func (d *BlockVolumeControllerDriver) DeleteVolume(ctx context.Context, req *csi
 	ctx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
 
+	log.Info("Deleting Volume")
 	err := d.client.BlockStorage().DeleteVolume(ctx, req.VolumeId)
-	if err != nil && !client.IsNotFound(err) {
-		log.With(zap.Error(err)).Error("Failed to delete volume.")
-		errorType = util.GetError(err)
-		csiMetricDimension = util.GetMetricDimensionForComponent(errorType, util.CSIStorageType)
-		dimensionsMap[metrics.ComponentDimension] = csiMetricDimension
-		metrics.SendMetricData(d.metricPusher, metrics.PVDelete, time.Since(startTime).Seconds(), dimensionsMap)
-		return nil, fmt.Errorf("failed to delete volume, volumeId: %s, error: %v", req.VolumeId, err)
+	if err != nil {
+		if !client.IsNotFound(err) {
+			log.With(zap.Error(err)).Error("Failed to delete volume.")
+			errorType = util.GetError(err)
+			csiMetricDimension = util.GetMetricDimensionForComponent(errorType, util.CSIStorageType)
+			dimensionsMap[metrics.ComponentDimension] = csiMetricDimension
+			metrics.SendMetricData(d.metricPusher, metrics.PVDelete, time.Since(startTime).Seconds(), dimensionsMap)
+			return nil, fmt.Errorf("failed to delete volume, volumeId: %s, error: %v", req.VolumeId, err)
+		}
+		log.With(zap.Error(err)).Error("Unable to find volume " +
+			"to delete. Volume is possibly already deleted. No Delete Operation required.")
+	} else {
+		log.Info("Volume is deleted.")
 	}
-
-	log.Info("Volume is deleted.")
 	csiMetricDimension = util.GetMetricDimensionForComponent(util.Success, util.CSIStorageType)
 	dimensionsMap[metrics.ComponentDimension] = csiMetricDimension
 	metrics.SendMetricData(d.metricPusher, metrics.PVDelete, time.Since(startTime).Seconds(), dimensionsMap)
@@ -539,11 +544,12 @@ func (d *BlockVolumeControllerDriver) ControllerPublishVolume(ctx context.Contex
 
 	// volume already attached to an instance
 	if err == nil {
+		log = log.With("volumeAttachedId", *volumeAttached.GetId())
 		if volumeAttached.GetLifecycleState() == core.VolumeAttachmentLifecycleStateDetaching {
-			log.Info("Waiting for volume to get detached before attaching.")
+			log.With("instanceID", *volumeAttached.GetInstanceId()).Info("Waiting for volume to get detached before attaching.")
 			err = d.client.Compute().WaitForVolumeDetached(ctx, *volumeAttached.GetId())
 			if err != nil {
-				log.With(zap.Error(err)).Error("Error while waiting for volume to get detached before attaching.")
+				log.With("instanceID", *volumeAttached.GetInstanceId()).With(zap.Error(err)).Error("Error while waiting for volume to get detached before attaching.")
 				errorType = util.GetError(err)
 				csiMetricDimension = util.GetMetricDimensionForComponent(errorType, util.CSIStorageType)
 				dimensionsMap[metrics.ComponentDimension] = csiMetricDimension
@@ -559,19 +565,21 @@ func (d *BlockVolumeControllerDriver) ControllerPublishVolume(ctx context.Contex
 				return nil, status.Errorf(codes.Internal, "Failed to attach volume to node. "+
 					"The volume is already attached to another node.")
 			}
-			if volumeAttached.GetLifecycleState() == core.VolumeAttachmentLifecycleStateAttaching ||
-				volumeAttached.GetLifecycleState() == core.VolumeAttachmentLifecycleStateAttached {
-				log.Info("Volume is ATTACHING to node.")
+			if volumeAttached.GetLifecycleState() == core.VolumeAttachmentLifecycleStateAttaching {
+				log.With("instanceID", id).Info("Volume is in ATTACHING state. Waiting for Volume to attach to the Node.")
 				volumeAttached, err = d.client.Compute().WaitForVolumeAttached(ctx, *volumeAttached.GetId())
 				if err != nil {
-					log.With(zap.Error(err)).Error("Error while waiting: failed to attach volume to the node.")
+					log.With("instanceID", id).With(zap.Error(err)).Error("Error while waiting: failed to attach volume to the node.")
 					errorType = util.GetError(err)
 					csiMetricDimension = util.GetMetricDimensionForComponent(errorType, util.CSIStorageType)
 					dimensionsMap[metrics.ComponentDimension] = csiMetricDimension
 					metrics.SendMetricData(d.metricPusher, metrics.PVAttach, time.Since(startTime).Seconds(), dimensionsMap)
 					return nil, status.Errorf(codes.Internal, "Failed to attach volume to the node: %s", err)
 				}
-				log.Info("Volume is already ATTACHED to node.")
+			}
+			//Checking if Volume state is already Attached or Attachment (from above condition) is completed
+			if volumeAttached.GetLifecycleState() == core.VolumeAttachmentLifecycleStateAttached {
+				log.With("instanceID", id).Info("Volume is  ATTACHED to the Node.")
 				return generatePublishContext(volumeAttachmentOptions, log, volumeAttached, vpusPerGB, req.VolumeContext[needResize], req.VolumeContext[newSize]), nil
 			}
 		}
@@ -582,7 +590,7 @@ func (d *BlockVolumeControllerDriver) ControllerPublishVolume(ctx context.Contex
 	if volumeAttachmentOptions.useParavirtualizedAttachment {
 		volumeAttached, err = d.client.Compute().AttachParavirtualizedVolume(context.Background(), id, req.VolumeId, volumeAttachmentOptions.enableInTransitEncryption)
 		if err != nil {
-			log.With(zap.Error(err)).Info("failed paravirtualized attachment instance to volume.")
+			log.With("instanceID", id).With(zap.Error(err)).Info("failed paravirtualized attachment instance to volume.")
 			errorType = util.GetError(err)
 			csiMetricDimension = util.GetMetricDimensionForComponent(errorType, util.CSIStorageType)
 			dimensionsMap[metrics.ComponentDimension] = csiMetricDimension
@@ -592,7 +600,7 @@ func (d *BlockVolumeControllerDriver) ControllerPublishVolume(ctx context.Contex
 	} else {
 		volumeAttached, err = d.client.Compute().AttachVolume(context.Background(), id, req.VolumeId)
 		if err != nil {
-			log.With(zap.Error(err)).Info("failed iscsi attachment instance to volume.")
+			log.With("instanceID", id).With(zap.Error(err)).Info("failed iscsi attachment instance to volume.")
 			errorType = util.GetError(err)
 			csiMetricDimension = util.GetMetricDimensionForComponent(errorType, util.CSIStorageType)
 			dimensionsMap[metrics.ComponentDimension] = csiMetricDimension
@@ -603,7 +611,7 @@ func (d *BlockVolumeControllerDriver) ControllerPublishVolume(ctx context.Contex
 
 	volumeAttached, err = d.client.Compute().WaitForVolumeAttached(ctx, *volumeAttached.GetId())
 	if err != nil {
-		log.With(zap.Error(err)).Error("Failed to attach volume to the node.")
+		log.With("instanceID", id).With(zap.Error(err)).Error("Failed to attach volume to the node.")
 		errorType = util.GetError(err)
 		csiMetricDimension = util.GetMetricDimensionForComponent(errorType, util.CSIStorageType)
 		dimensionsMap[metrics.ComponentDimension] = csiMetricDimension
@@ -626,8 +634,8 @@ func generatePublishContext(volumeAttachmentOptions VolumeAttachmentOption, log 
 				attachmentType:     attachmentTypeParavirtualized,
 				device:             *volumeAttached.GetDevice(),
 				csi_util.VpusPerGB: vpusPerGB,
-				needResize: needsResize,
-				newSize: expectedSize,
+				needResize:         needsResize,
+				newSize:            expectedSize,
 			},
 		}
 	}
@@ -642,8 +650,8 @@ func generatePublishContext(volumeAttachmentOptions VolumeAttachmentOption, log 
 			disk.ISCSIIP:       *iSCSIVolumeAttached.Ipv4,
 			disk.ISCSIPORT:     strconv.Itoa(*iSCSIVolumeAttached.Port),
 			csi_util.VpusPerGB: vpusPerGB,
-			needResize: needsResize,
-			newSize: expectedSize,
+			needResize:         needsResize,
+			newSize:            expectedSize,
 		},
 	}
 }
@@ -651,7 +659,7 @@ func generatePublishContext(volumeAttachmentOptions VolumeAttachmentOption, log 
 // ControllerUnpublishVolume detaches the given volume from the node
 func (d *BlockVolumeControllerDriver) ControllerUnpublishVolume(ctx context.Context, req *csi.ControllerUnpublishVolumeRequest) (*csi.ControllerUnpublishVolumeResponse, error) {
 	startTime := time.Now()
-	log := d.logger.With("volumeID", req.VolumeId)
+	log := d.logger.With("volumeID", req.VolumeId, "nodeId", req.NodeId)
 	var errorType string
 	var csiMetricDimension string
 
@@ -664,7 +672,7 @@ func (d *BlockVolumeControllerDriver) ControllerUnpublishVolume(ctx context.Cont
 
 	compartmentID, err := util.LookupNodeCompartment(d.KubeClient, req.NodeId)
 	if err != nil {
-		if apierrors.IsNotFound(err) {
+		if k8sapierrors.IsNotFound(err) {
 			log.Infof("Node with nodeID %s is not found, volume is likely already detached", req.NodeId)
 			csiMetricDimension = util.GetMetricDimensionForComponent(util.Success, util.CSIStorageType)
 			dimensionsMap[metrics.ComponentDimension] = csiMetricDimension
@@ -678,36 +686,43 @@ func (d *BlockVolumeControllerDriver) ControllerUnpublishVolume(ctx context.Cont
 		metrics.SendMetricData(d.metricPusher, metrics.PVDetach, time.Since(startTime).Seconds(), dimensionsMap)
 		return nil, status.Errorf(codes.Unknown, "failed to get compartmentID from node annotation:: error : %s", err)
 	}
-
+	log = log.With("compartmentID", compartmentID)
 	attachedVolume, err := d.client.Compute().FindVolumeAttachment(context.Background(), compartmentID, req.VolumeId)
+	if attachedVolume != nil && attachedVolume.GetId() != nil {
+		log = log.With("volumeAttachedId", *attachedVolume.GetId())
+	}
 	if err != nil {
-		if client.IsNotFound(err) {
-			log.With(zap.Error(err)).With("compartmentID", compartmentID).With("nodeId", req.NodeId).Error("Unable to find volume " +
+		if !client.IsNotFound(err) {
+			log.With(zap.Error(err)).Error("Error while fetching the Volume details. Unable to detach Volume from the node.")
+			errorType = util.GetError(err)
+			csiMetricDimension = util.GetMetricDimensionForComponent(errorType, util.CSIStorageType)
+			dimensionsMap[metrics.ComponentDimension] = csiMetricDimension
+			metrics.SendMetricData(d.metricPusher, metrics.PVDetach, time.Since(startTime).Seconds(), dimensionsMap)
+			return nil, err
+		}
+		if attachedVolume == nil {
+			log.With(zap.Error(err)).Error("Unable to find volume " +
 				"attachment for volume to detach. Volume is possibly already detached. Nothing to do in Un-publish Volume.")
 			return &csi.ControllerUnpublishVolumeResponse{}, nil
 		}
-		log.With(zap.Error(err)).With("nodeId", req.NodeId).Error("Volume is not detached from the node.")
-		errorType = util.GetError(err)
-		csiMetricDimension = util.GetMetricDimensionForComponent(errorType, util.CSIStorageType)
-		dimensionsMap[metrics.ComponentDimension] = csiMetricDimension
-		metrics.SendMetricData(d.metricPusher, metrics.PVDetach, time.Since(startTime).Seconds(), dimensionsMap)
-		return nil, err
+		log.Info("Attached Volume is still in Detaching state")
 	}
-
-	log.With("volumeAttachedId", attachedVolume.GetId()).Info("Detaching Volume.")
-	err = d.client.Compute().DetachVolume(context.Background(), *attachedVolume.GetId())
-	if err != nil {
-		log.With(zap.Error(err)).With("nodeId", req.NodeId).Error("Volume can not be detached.")
-		errorType = util.GetError(err)
-		csiMetricDimension = util.GetMetricDimensionForComponent(errorType, util.CSIStorageType)
-		dimensionsMap[metrics.ComponentDimension] = csiMetricDimension
-		metrics.SendMetricData(d.metricPusher, metrics.PVDetach, time.Since(startTime).Seconds(), dimensionsMap)
-		return nil, status.Errorf(codes.Unknown, "volume can not be detached %s", err)
+	if attachedVolume.GetLifecycleState() != core.VolumeAttachmentLifecycleStateDetaching {
+		log.With("instanceID", *attachedVolume.GetInstanceId()).Info("Detaching Volume")
+		err = d.client.Compute().DetachVolume(context.Background(), *attachedVolume.GetId())
+		if err != nil {
+			log.With("instanceID", *attachedVolume.GetInstanceId()).With(zap.Error(err)).Error("Volume can not be detached")
+			errorType = util.GetError(err)
+			csiMetricDimension = util.GetMetricDimensionForComponent(errorType, util.CSIStorageType)
+			dimensionsMap[metrics.ComponentDimension] = csiMetricDimension
+			metrics.SendMetricData(d.metricPusher, metrics.PVDetach, time.Since(startTime).Seconds(), dimensionsMap)
+			return nil, status.Errorf(codes.Unknown, "volume can not be detached %s", err)
+		}
 	}
-
+	log.With("instanceID", *attachedVolume.GetInstanceId()).Info("Waiting for Volume to Detach")
 	err = d.client.Compute().WaitForVolumeDetached(context.Background(), *attachedVolume.GetId())
 	if err != nil {
-		log.With(zap.Error(err)).With("nodeId", req.NodeId).Error("timed out waiting for volume to be detached.")
+		log.With("instanceID", *attachedVolume.GetInstanceId()).With(zap.Error(err)).Error("timed out waiting for volume to be detached")
 		errorType = util.GetError(err)
 		csiMetricDimension = util.GetMetricDimensionForComponent(errorType, util.CSIStorageType)
 		dimensionsMap[metrics.ComponentDimension] = csiMetricDimension
@@ -715,7 +730,7 @@ func (d *BlockVolumeControllerDriver) ControllerUnpublishVolume(ctx context.Cont
 		return nil, status.Errorf(codes.Unknown, "timed out waiting for volume to be detached %s", err)
 	}
 
-	log.With("volumeAttachedId", attachedVolume.GetId()).Info("Un-publishing Volume Completed.")
+	log.Info("Un-publishing Volume Completed")
 	csiMetricDimension = util.GetMetricDimensionForComponent(util.Success, util.CSIStorageType)
 	dimensionsMap[metrics.ComponentDimension] = csiMetricDimension
 	metrics.SendMetricData(d.metricPusher, metrics.PVDetach, time.Since(startTime).Seconds(), dimensionsMap)
@@ -937,11 +952,11 @@ func (d *BlockVolumeControllerDriver) CreateSnapshot(ctx context.Context, req *c
 	}
 
 	snapshot, err := d.client.BlockStorage().CreateVolumeBackup(ctx, core.CreateVolumeBackupDetails{
-		VolumeId:		&sourceVolumeId,
-		Type: 			snapshotParams.backupType,
-		DisplayName: 	&req.Name,
-		FreeformTags:   backupTags.FreeformTags,
-		DefinedTags:    backupTags.DefinedTags,
+		VolumeId:     &sourceVolumeId,
+		Type:         snapshotParams.backupType,
+		DisplayName:  &req.Name,
+		FreeformTags: backupTags.FreeformTags,
+		DefinedTags:  backupTags.DefinedTags,
 	})
 
 	if err != nil {
@@ -988,11 +1003,11 @@ func (d *BlockVolumeControllerDriver) CreateSnapshot(ctx context.Context, req *c
 
 	return &csi.CreateSnapshotResponse{
 		Snapshot: &csi.Snapshot{
-			SnapshotId: *snapshot.Id,
+			SnapshotId:     *snapshot.Id,
 			SourceVolumeId: *snapshot.VolumeId,
-			SizeBytes: *snapshot.SizeInMBs * client.MiB,
-			CreationTime: ts,
-			ReadyToUse: true,
+			SizeBytes:      *snapshot.SizeInMBs * client.MiB,
+			CreationTime:   ts,
+			ReadyToUse:     true,
 		},
 	}, nil
 }
@@ -1019,7 +1034,7 @@ func (d *BlockVolumeControllerDriver) DeleteSnapshot(ctx context.Context, req *c
 	defer cancel()
 
 	err := d.client.BlockStorage().DeleteVolumeBackup(ctx, req.SnapshotId)
-	if err != nil && !apierrors.IsNotFound(err) {
+	if err != nil && !k8sapierrors.IsNotFound(err) {
 		errorType = util.GetError(err)
 		snapshotMetricDimension = util.GetMetricDimensionForComponent(errorType, util.CSIBVSnapshot)
 		dimensionsMap[metrics.ComponentDimension] = snapshotMetricDimension
