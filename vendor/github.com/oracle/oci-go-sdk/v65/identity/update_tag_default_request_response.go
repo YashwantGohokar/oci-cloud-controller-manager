@@ -13,7 +13,7 @@ import (
 
 // UpdateTagDefaultRequest wrapper for the UpdateTagDefault operation
 //
-// See also
+// # See also
 //
 // Click https://docs.cloud.oracle.com/en-us/iaas/tools/go-sdk-examples/latest/identity/UpdateTagDefault.go.html to see an example of how to use UpdateTagDefaultRequest.
 type UpdateTagDefaultRequest struct {
@@ -23,6 +23,9 @@ type UpdateTagDefaultRequest struct {
 
 	// Request object for updating a tag default.
 	UpdateTagDefaultDetails `contributesTo:"body"`
+
+	// Whether to override locks (if any exist).
+	IsLockOverride *bool `mandatory:"false" contributesTo:"query" name:"isLockOverride"`
 
 	// For optimistic concurrency control. In the PUT or DELETE call for a resource, set the `if-match`
 	// parameter to the value of the etag from a previous GET or POST response for that resource.  The resource

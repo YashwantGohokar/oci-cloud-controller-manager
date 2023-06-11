@@ -6,8 +6,7 @@
 //
 // Use the Monitoring API to manage metric queries and alarms for assessing the health, capacity, and performance of your cloud resources.
 // Endpoints vary by operation. For PostMetric, use the `telemetry-ingestion` endpoints; for all other operations, use the `telemetry` endpoints.
-// For more information, see
-// the Monitoring documentation (https://docs.cloud.oracle.com/iaas/Content/Monitoring/home.htm).
+// For information about monitoring, see Monitoring Overview (https://docs.cloud.oracle.com/iaas/Content/Monitoring/Concepts/monitoringoverview.htm).
 //
 
 package monitoring
@@ -22,7 +21,6 @@ import (
 type Datapoint struct {
 
 	// Timestamp for this metric value. Format defined by RFC3339.
-	// For a data point to be posted, its timestamp must be near current time (less than two hours in the past and less than 10 minutes in the future).
 	// Example: `2019-02-01T01:02:29.600Z`
 	Timestamp *common.SDKTime `mandatory:"true" json:"timestamp"`
 

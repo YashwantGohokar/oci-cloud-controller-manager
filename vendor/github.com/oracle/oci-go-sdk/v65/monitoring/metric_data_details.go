@@ -6,8 +6,7 @@
 //
 // Use the Monitoring API to manage metric queries and alarms for assessing the health, capacity, and performance of your cloud resources.
 // Endpoints vary by operation. For PostMetric, use the `telemetry-ingestion` endpoints; for all other operations, use the `telemetry` endpoints.
-// For more information, see
-// the Monitoring documentation (https://docs.cloud.oracle.com/iaas/Content/Monitoring/home.htm).
+// For information about monitoring, see Monitoring Overview (https://docs.cloud.oracle.com/iaas/Content/Monitoring/Concepts/monitoringoverview.htm).
 //
 
 package monitoring
@@ -38,14 +37,13 @@ type MetricDataDetails struct {
 
 	// Qualifiers provided in a metric definition. Available dimensions vary by metric namespace.
 	// Each dimension takes the form of a key-value pair.
-	// A valid dimension key includes only printable ASCII, excluding periods (.) and spaces. The character limit for a dimension key is 256.
-	// A valid dimension value includes only Unicode characters. The character limit for a dimension value is 256.
+	// A valid dimension key includes only printable ASCII, excluding spaces. The character limit for a dimension key is 256.
+	// A valid dimension value includes only Unicode characters. The character limit for a dimension value is 512.
 	// Empty strings are not allowed for keys or values. Avoid entering confidential information.
 	// Example: `"resourceId": "ocid1.instance.region1.phx.exampleuniqueID"`
 	Dimensions map[string]string `mandatory:"true" json:"dimensions"`
 
 	// A list of metric values with timestamps. At least one data point is required per call.
-	// For a data point to be posted, its timestamp must be near current time (less than two hours in the past and less than 10 minutes in the future).
 	Datapoints []Datapoint `mandatory:"true" json:"datapoints"`
 
 	// Resource group to assign to the metric. A resource group is a custom string that you can match when retrieving custom metrics. Only one resource group can be applied per metric.

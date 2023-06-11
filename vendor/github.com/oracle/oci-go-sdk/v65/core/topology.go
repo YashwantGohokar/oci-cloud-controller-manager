@@ -84,6 +84,7 @@ func (m *topology) UnmarshalPolymorphicJSON(data []byte) (interface{}, error) {
 		err = json.Unmarshal(data, &mm)
 		return mm, err
 	default:
+		common.Logf("Recieved unsupported enum value for Topology: %s.", m.Type)
 		return *m, nil
 	}
 }
@@ -127,18 +128,21 @@ const (
 	TopologyTypeNetworking TopologyTypeEnum = "NETWORKING"
 	TopologyTypeVcn        TopologyTypeEnum = "VCN"
 	TopologyTypeSubnet     TopologyTypeEnum = "SUBNET"
+	TopologyTypePath       TopologyTypeEnum = "PATH"
 )
 
 var mappingTopologyTypeEnum = map[string]TopologyTypeEnum{
 	"NETWORKING": TopologyTypeNetworking,
 	"VCN":        TopologyTypeVcn,
 	"SUBNET":     TopologyTypeSubnet,
+	"PATH":       TopologyTypePath,
 }
 
 var mappingTopologyTypeEnumLowerCase = map[string]TopologyTypeEnum{
 	"networking": TopologyTypeNetworking,
 	"vcn":        TopologyTypeVcn,
 	"subnet":     TopologyTypeSubnet,
+	"path":       TopologyTypePath,
 }
 
 // GetTopologyTypeEnumValues Enumerates the set of values for TopologyTypeEnum
@@ -156,6 +160,7 @@ func GetTopologyTypeEnumStringValues() []string {
 		"NETWORKING",
 		"VCN",
 		"SUBNET",
+		"PATH",
 	}
 }
 

@@ -13,7 +13,7 @@ import (
 
 // TerminateInstanceRequest wrapper for the TerminateInstance operation
 //
-// See also
+// # See also
 //
 // Click https://docs.cloud.oracle.com/en-us/iaas/tools/go-sdk-examples/latest/core/TerminateInstance.go.html to see an example of how to use TerminateInstanceRequest.
 type TerminateInstanceRequest struct {
@@ -29,10 +29,6 @@ type TerminateInstanceRequest struct {
 	// Specifies whether to delete or preserve the boot volume when terminating an instance.
 	// When set to `true`, the boot volume is preserved. The default value is `false`.
 	PreserveBootVolume *bool `mandatory:"false" contributesTo:"query" name:"preserveBootVolume"`
-
-	// Specifies whether to delete or preserve the data volumes when terminating an instance.
-	// When set to `true`, the boot volume is preserved. The default value is `false`.
-	PreserveDataVolumes *bool `mandatory:"false" contributesTo:"query" name:"preserveDataVolumes"`
 
 	// Unique Oracle-assigned identifier for the request.
 	// If you need to contact Oracle about a particular request, please provide the request ID.

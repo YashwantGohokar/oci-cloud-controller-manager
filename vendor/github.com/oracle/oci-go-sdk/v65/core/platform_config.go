@@ -33,6 +33,9 @@ type PlatformConfig interface {
 
 	// Whether the Measured Boot feature is enabled on the instance.
 	GetIsMeasuredBootEnabled() *bool
+
+	// Whether the instance is a confidential instance. If this value is `true`, the instance is a confidential instance. The default value is `false`.
+	GetIsMemoryEncryptionEnabled() *bool
 }
 
 type platformconfig struct {
@@ -40,6 +43,7 @@ type platformconfig struct {
 	IsSecureBootEnabled            *bool  `mandatory:"false" json:"isSecureBootEnabled"`
 	IsTrustedPlatformModuleEnabled *bool  `mandatory:"false" json:"isTrustedPlatformModuleEnabled"`
 	IsMeasuredBootEnabled          *bool  `mandatory:"false" json:"isMeasuredBootEnabled"`
+	IsMemoryEncryptionEnabled      *bool  `mandatory:"false" json:"isMemoryEncryptionEnabled"`
 	Type                           string `json:"type"`
 }
 
@@ -57,6 +61,7 @@ func (m *platformconfig) UnmarshalJSON(data []byte) error {
 	m.IsSecureBootEnabled = s.Model.IsSecureBootEnabled
 	m.IsTrustedPlatformModuleEnabled = s.Model.IsTrustedPlatformModuleEnabled
 	m.IsMeasuredBootEnabled = s.Model.IsMeasuredBootEnabled
+	m.IsMemoryEncryptionEnabled = s.Model.IsMemoryEncryptionEnabled
 	m.Type = s.Model.Type
 
 	return err
@@ -83,6 +88,14 @@ func (m *platformconfig) UnmarshalPolymorphicJSON(data []byte) (interface{}, err
 		mm := IntelSkylakeBmPlatformConfig{}
 		err = json.Unmarshal(data, &mm)
 		return mm, err
+	case "AMD_ROME_BM_GPU":
+		mm := AmdRomeBmGpuPlatformConfig{}
+		err = json.Unmarshal(data, &mm)
+		return mm, err
+	case "INTEL_ICELAKE_BM":
+		mm := IntelIcelakeBmPlatformConfig{}
+		err = json.Unmarshal(data, &mm)
+		return mm, err
 	case "AMD_VM":
 		mm := AmdVmPlatformConfig{}
 		err = json.Unmarshal(data, &mm)
@@ -96,6 +109,7 @@ func (m *platformconfig) UnmarshalPolymorphicJSON(data []byte) (interface{}, err
 		err = json.Unmarshal(data, &mm)
 		return mm, err
 	default:
+		common.Logf("Recieved unsupported enum value for PlatformConfig: %s.", m.Type)
 		return *m, nil
 	}
 }
@@ -113,6 +127,11 @@ func (m platformconfig) GetIsTrustedPlatformModuleEnabled() *bool {
 //GetIsMeasuredBootEnabled returns IsMeasuredBootEnabled
 func (m platformconfig) GetIsMeasuredBootEnabled() *bool {
 	return m.IsMeasuredBootEnabled
+}
+
+//GetIsMemoryEncryptionEnabled returns IsMemoryEncryptionEnabled
+func (m platformconfig) GetIsMemoryEncryptionEnabled() *bool {
+	return m.IsMemoryEncryptionEnabled
 }
 
 func (m platformconfig) String() string {
@@ -139,6 +158,8 @@ const (
 	PlatformConfigTypeAmdMilanBm     PlatformConfigTypeEnum = "AMD_MILAN_BM"
 	PlatformConfigTypeAmdMilanBmGpu  PlatformConfigTypeEnum = "AMD_MILAN_BM_GPU"
 	PlatformConfigTypeAmdRomeBm      PlatformConfigTypeEnum = "AMD_ROME_BM"
+	PlatformConfigTypeAmdRomeBmGpu   PlatformConfigTypeEnum = "AMD_ROME_BM_GPU"
+	PlatformConfigTypeIntelIcelakeBm PlatformConfigTypeEnum = "INTEL_ICELAKE_BM"
 	PlatformConfigTypeIntelSkylakeBm PlatformConfigTypeEnum = "INTEL_SKYLAKE_BM"
 	PlatformConfigTypeAmdVm          PlatformConfigTypeEnum = "AMD_VM"
 	PlatformConfigTypeIntelVm        PlatformConfigTypeEnum = "INTEL_VM"
@@ -148,6 +169,8 @@ var mappingPlatformConfigTypeEnum = map[string]PlatformConfigTypeEnum{
 	"AMD_MILAN_BM":     PlatformConfigTypeAmdMilanBm,
 	"AMD_MILAN_BM_GPU": PlatformConfigTypeAmdMilanBmGpu,
 	"AMD_ROME_BM":      PlatformConfigTypeAmdRomeBm,
+	"AMD_ROME_BM_GPU":  PlatformConfigTypeAmdRomeBmGpu,
+	"INTEL_ICELAKE_BM": PlatformConfigTypeIntelIcelakeBm,
 	"INTEL_SKYLAKE_BM": PlatformConfigTypeIntelSkylakeBm,
 	"AMD_VM":           PlatformConfigTypeAmdVm,
 	"INTEL_VM":         PlatformConfigTypeIntelVm,
@@ -157,6 +180,8 @@ var mappingPlatformConfigTypeEnumLowerCase = map[string]PlatformConfigTypeEnum{
 	"amd_milan_bm":     PlatformConfigTypeAmdMilanBm,
 	"amd_milan_bm_gpu": PlatformConfigTypeAmdMilanBmGpu,
 	"amd_rome_bm":      PlatformConfigTypeAmdRomeBm,
+	"amd_rome_bm_gpu":  PlatformConfigTypeAmdRomeBmGpu,
+	"intel_icelake_bm": PlatformConfigTypeIntelIcelakeBm,
 	"intel_skylake_bm": PlatformConfigTypeIntelSkylakeBm,
 	"amd_vm":           PlatformConfigTypeAmdVm,
 	"intel_vm":         PlatformConfigTypeIntelVm,
@@ -177,6 +202,8 @@ func GetPlatformConfigTypeEnumStringValues() []string {
 		"AMD_MILAN_BM",
 		"AMD_MILAN_BM_GPU",
 		"AMD_ROME_BM",
+		"AMD_ROME_BM_GPU",
+		"INTEL_ICELAKE_BM",
 		"INTEL_SKYLAKE_BM",
 		"AMD_VM",
 		"INTEL_VM",

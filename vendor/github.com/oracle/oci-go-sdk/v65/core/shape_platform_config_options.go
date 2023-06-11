@@ -34,6 +34,18 @@ type ShapePlatformConfigOptions struct {
 	TrustedPlatformModuleOptions *ShapeTrustedPlatformModuleOptions `mandatory:"false" json:"trustedPlatformModuleOptions"`
 
 	NumaNodesPerSocketPlatformOptions *ShapeNumaNodesPerSocketPlatformOptions `mandatory:"false" json:"numaNodesPerSocketPlatformOptions"`
+
+	MemoryEncryptionOptions *ShapeMemoryEncryptionOptions `mandatory:"false" json:"memoryEncryptionOptions"`
+
+	SymmetricMultiThreadingOptions *ShapeSymmetricMultiThreadingEnabledPlatformOptions `mandatory:"false" json:"symmetricMultiThreadingOptions"`
+
+	AccessControlServiceOptions *ShapeAccessControlServiceEnabledPlatformOptions `mandatory:"false" json:"accessControlServiceOptions"`
+
+	VirtualInstructionsOptions *ShapeVirtualInstructionsEnabledPlatformOptions `mandatory:"false" json:"virtualInstructionsOptions"`
+
+	InputOutputMemoryManagementUnitOptions *ShapeInputOutputMemoryManagementUnitEnabledPlatformOptions `mandatory:"false" json:"inputOutputMemoryManagementUnitOptions"`
+
+	PercentageOfCoresEnabledOptions *PercentageOfCoresEnabledOptions `mandatory:"false" json:"percentageOfCoresEnabledOptions"`
 }
 
 func (m ShapePlatformConfigOptions) String() string {
@@ -63,6 +75,8 @@ const (
 	ShapePlatformConfigOptionsTypeAmdMilanBm     ShapePlatformConfigOptionsTypeEnum = "AMD_MILAN_BM"
 	ShapePlatformConfigOptionsTypeAmdMilanBmGpu  ShapePlatformConfigOptionsTypeEnum = "AMD_MILAN_BM_GPU"
 	ShapePlatformConfigOptionsTypeAmdRomeBm      ShapePlatformConfigOptionsTypeEnum = "AMD_ROME_BM"
+	ShapePlatformConfigOptionsTypeAmdRomeBmGpu   ShapePlatformConfigOptionsTypeEnum = "AMD_ROME_BM_GPU"
+	ShapePlatformConfigOptionsTypeIntelIcelakeBm ShapePlatformConfigOptionsTypeEnum = "INTEL_ICELAKE_BM"
 	ShapePlatformConfigOptionsTypeIntelSkylakeBm ShapePlatformConfigOptionsTypeEnum = "INTEL_SKYLAKE_BM"
 	ShapePlatformConfigOptionsTypeAmdVm          ShapePlatformConfigOptionsTypeEnum = "AMD_VM"
 	ShapePlatformConfigOptionsTypeIntelVm        ShapePlatformConfigOptionsTypeEnum = "INTEL_VM"
@@ -72,6 +86,8 @@ var mappingShapePlatformConfigOptionsTypeEnum = map[string]ShapePlatformConfigOp
 	"AMD_MILAN_BM":     ShapePlatformConfigOptionsTypeAmdMilanBm,
 	"AMD_MILAN_BM_GPU": ShapePlatformConfigOptionsTypeAmdMilanBmGpu,
 	"AMD_ROME_BM":      ShapePlatformConfigOptionsTypeAmdRomeBm,
+	"AMD_ROME_BM_GPU":  ShapePlatformConfigOptionsTypeAmdRomeBmGpu,
+	"INTEL_ICELAKE_BM": ShapePlatformConfigOptionsTypeIntelIcelakeBm,
 	"INTEL_SKYLAKE_BM": ShapePlatformConfigOptionsTypeIntelSkylakeBm,
 	"AMD_VM":           ShapePlatformConfigOptionsTypeAmdVm,
 	"INTEL_VM":         ShapePlatformConfigOptionsTypeIntelVm,
@@ -81,6 +97,8 @@ var mappingShapePlatformConfigOptionsTypeEnumLowerCase = map[string]ShapePlatfor
 	"amd_milan_bm":     ShapePlatformConfigOptionsTypeAmdMilanBm,
 	"amd_milan_bm_gpu": ShapePlatformConfigOptionsTypeAmdMilanBmGpu,
 	"amd_rome_bm":      ShapePlatformConfigOptionsTypeAmdRomeBm,
+	"amd_rome_bm_gpu":  ShapePlatformConfigOptionsTypeAmdRomeBmGpu,
+	"intel_icelake_bm": ShapePlatformConfigOptionsTypeIntelIcelakeBm,
 	"intel_skylake_bm": ShapePlatformConfigOptionsTypeIntelSkylakeBm,
 	"amd_vm":           ShapePlatformConfigOptionsTypeAmdVm,
 	"intel_vm":         ShapePlatformConfigOptionsTypeIntelVm,
@@ -101,6 +119,8 @@ func GetShapePlatformConfigOptionsTypeEnumStringValues() []string {
 		"AMD_MILAN_BM",
 		"AMD_MILAN_BM_GPU",
 		"AMD_ROME_BM",
+		"AMD_ROME_BM_GPU",
+		"INTEL_ICELAKE_BM",
 		"INTEL_SKYLAKE_BM",
 		"AMD_VM",
 		"INTEL_VM",

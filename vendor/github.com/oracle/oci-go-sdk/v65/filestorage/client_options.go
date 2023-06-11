@@ -4,7 +4,8 @@
 
 // File Storage API
 //
-// API for the File Storage service. Use this API to manage file systems, mount targets, and snapshots. For more information, see Overview of File Storage (https://docs.cloud.oracle.com/iaas/Content/File/Concepts/filestorageoverview.htm).
+// Use the File Storage service API to manage file systems, mount targets, and snapshots.
+// For more information, see Overview of File Storage (https://docs.cloud.oracle.com/iaas/Content/File/Concepts/filestorageoverview.htm).
 //
 
 package filestorage
@@ -35,7 +36,7 @@ type ClientOptions struct {
 	RequirePrivilegedSourcePort *bool `mandatory:"false" json:"requirePrivilegedSourcePort"`
 
 	// Type of access to grant clients using the file system
-	// through this export. If unspecified defaults to `READ_ONLY`.
+	// through this export. If unspecified defaults to `READ_WRITE`.
 	Access ClientOptionsAccessEnum `mandatory:"false" json:"access,omitempty"`
 
 	// Used when clients accessing the file system through this export

@@ -13,7 +13,7 @@ import (
 
 // UpdateTagNamespaceRequest wrapper for the UpdateTagNamespace operation
 //
-// See also
+// # See also
 //
 // Click https://docs.cloud.oracle.com/en-us/iaas/tools/go-sdk-examples/latest/identity/UpdateTagNamespace.go.html to see an example of how to use UpdateTagNamespaceRequest.
 type UpdateTagNamespaceRequest struct {
@@ -23,6 +23,9 @@ type UpdateTagNamespaceRequest struct {
 
 	// Request object for updating a namespace.
 	UpdateTagNamespaceDetails `contributesTo:"body"`
+
+	// Whether to override locks (if any exist).
+	IsLockOverride *bool `mandatory:"false" contributesTo:"query" name:"isLockOverride"`
 
 	// Unique Oracle-assigned identifier for the request.
 	// If you need to contact Oracle about a particular request, please provide the request ID.

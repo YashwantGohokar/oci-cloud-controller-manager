@@ -13,7 +13,7 @@ import (
 
 // ListProtocolsRequest wrapper for the ListProtocols operation
 //
-// See also
+// # See also
 //
 // Click https://docs.cloud.oracle.com/en-us/iaas/tools/go-sdk-examples/latest/loadbalancer/ListProtocols.go.html to see an example of how to use ListProtocolsRequest.
 type ListProtocolsRequest struct {
@@ -86,12 +86,13 @@ type ListProtocolsResponse struct {
 	// A list of []LoadBalancerProtocol instances
 	Items []LoadBalancerProtocol `presentIn:"body"`
 
-	// For list pagination. When this header appears in the response, additional pages of results remain.
-	// For important details about how pagination works, see List Pagination (https://docs.cloud.oracle.com/iaas/Content/API/Concepts/usingapi.htm#nine).
+	// For list pagination. When this header appears in the response, additional pages
+	// of results remain. For important details about how pagination works, see
+	// List Pagination (https://docs.cloud.oracle.com/iaas/Content/API/Concepts/usingapi.htm#nine).
 	OpcNextPage *string `presentIn:"header" name:"opc-next-page"`
 
-	// Unique Oracle-assigned identifier for the request. If you need to contact Oracle about
-	// a particular request, please provide the request ID.
+	// Unique Oracle-assigned identifier for the request. If you need to contact
+	// Oracle about a particular request, please provide the request ID.
 	OpcRequestId *string `presentIn:"header" name:"opc-request-id"`
 }
 

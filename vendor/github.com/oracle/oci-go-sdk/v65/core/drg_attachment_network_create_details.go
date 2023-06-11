@@ -25,13 +25,13 @@ import (
 // DrgAttachmentNetworkCreateDetails The representation of DrgAttachmentNetworkCreateDetails
 type DrgAttachmentNetworkCreateDetails interface {
 
-	// The OCID (https://docs.cloud.oracle.com/Content/General/Concepts/identifiers.htm) of the network attached to the DRG.
+	// The OCID (https://docs.cloud.oracle.com/iaas/Content/General/Concepts/identifiers.htm) of the network attached to the DRG.
 	GetId() *string
 }
 
 type drgattachmentnetworkcreatedetails struct {
 	JsonData []byte
-	Id       *string `mandatory:"false" json:"id"`
+	Id       *string `mandatory:"true" json:"id"`
 	Type     string  `json:"type"`
 }
 
@@ -66,6 +66,7 @@ func (m *drgattachmentnetworkcreatedetails) UnmarshalPolymorphicJSON(data []byte
 		err = json.Unmarshal(data, &mm)
 		return mm, err
 	default:
+		common.Logf("Recieved unsupported enum value for DrgAttachmentNetworkCreateDetails: %s.", m.Type)
 		return *m, nil
 	}
 }

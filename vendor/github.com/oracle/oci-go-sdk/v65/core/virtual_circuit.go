@@ -69,14 +69,11 @@ type VirtualCircuit struct {
 	// By default, routing information is shared for all routes in the same market.
 	RoutingPolicy []VirtualCircuitRoutingPolicyEnum `mandatory:"false" json:"routingPolicy,omitempty"`
 
-	// Set to ENABLED to activate the  bgp session of virtual circuit, DISABLED to deactivate.
+	// Set to `ENABLED` (the default) to activate the BGP session of the virtual circuit, set to `DISABLED` to deactivate the virtual circuit.
 	BgpAdminState VirtualCircuitBgpAdminStateEnum `mandatory:"false" json:"bgpAdminState,omitempty"`
 
-	// Set to true to enable BFD for ipv4 Bgp Peering, false to disable. If not set, default is false
+	// Set to `true` to enable BFD for IPv4 BGP peering, or set to `false` to disable BFD. If this is not set, the default is `false`.
 	IsBfdEnabled *bool `mandatory:"false" json:"isBfdEnabled"`
-
-	// Set to `true` for the virtual circuit to carry only encrypted traffic, or set to `false` for the virtual circuit to carry unencrypted traffic. If this is not set, the default is `false`.
-	IsTransportMode *bool `mandatory:"false" json:"isTransportMode"`
 
 	// Deprecated. Instead use `customerAsn`.
 	// If you specify values for both, the request will be rejected.

@@ -13,7 +13,7 @@ import (
 
 // ListIpv6sRequest wrapper for the ListIpv6s operation
 //
-// See also
+// # See also
 //
 // Click https://docs.cloud.oracle.com/en-us/iaas/tools/go-sdk-examples/latest/core/ListIpv6s.go.html to see an example of how to use ListIpv6sRequest.
 type ListIpv6sRequest struct {
@@ -33,7 +33,7 @@ type ListIpv6sRequest struct {
 	// Example: `10.0.3.3`
 	IpAddress *string `mandatory:"false" contributesTo:"query" name:"ipAddress"`
 
-	// The OCID (https://docs.cloud.oracle.com/Content/General/Concepts/identifiers.htm) of the subnet.
+	// The OCID (https://docs.cloud.oracle.com/iaas/Content/General/Concepts/identifiers.htm) of the subnet.
 	SubnetId *string `mandatory:"false" contributesTo:"query" name:"subnetId"`
 
 	// The OCID of the VNIC.

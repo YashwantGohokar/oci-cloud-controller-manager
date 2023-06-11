@@ -13,7 +13,7 @@ import (
 
 // ListCrossConnectsRequest wrapper for the ListCrossConnects operation
 //
-// See also
+// # See also
 //
 // Click https://docs.cloud.oracle.com/en-us/iaas/tools/go-sdk-examples/latest/core/ListCrossConnects.go.html to see an example of how to use ListCrossConnectsRequest.
 type ListCrossConnectsRequest struct {
@@ -21,7 +21,7 @@ type ListCrossConnectsRequest struct {
 	// The OCID (https://docs.cloud.oracle.com/iaas/Content/General/Concepts/identifiers.htm) of the compartment.
 	CompartmentId *string `mandatory:"true" contributesTo:"query" name:"compartmentId"`
 
-	// The OCID (https://docs.cloud.oracle.com/Content/General/Concepts/identifiers.htm) of the cross-connect group.
+	// The OCID (https://docs.cloud.oracle.com/iaas/Content/General/Concepts/identifiers.htm) of the cross-connect group.
 	CrossConnectGroupId *string `mandatory:"false" contributesTo:"query" name:"crossConnectGroupId"`
 
 	// For list pagination. The maximum number of results per page, or items to return in a paginated

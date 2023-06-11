@@ -13,12 +13,12 @@ import (
 
 // GetSecurityListRequest wrapper for the GetSecurityList operation
 //
-// See also
+// # See also
 //
 // Click https://docs.cloud.oracle.com/en-us/iaas/tools/go-sdk-examples/latest/core/GetSecurityList.go.html to see an example of how to use GetSecurityListRequest.
 type GetSecurityListRequest struct {
 
-	// The OCID (https://docs.cloud.oracle.com/Content/General/Concepts/identifiers.htm) of the security list.
+	// The OCID (https://docs.cloud.oracle.com/iaas/Content/General/Concepts/identifiers.htm) of the security list.
 	SecurityListId *string `mandatory:"true" contributesTo:"path" name:"securityListId"`
 
 	// Unique Oracle-assigned identifier for the request.

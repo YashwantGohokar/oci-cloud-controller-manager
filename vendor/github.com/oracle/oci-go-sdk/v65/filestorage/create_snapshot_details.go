@@ -4,7 +4,8 @@
 
 // File Storage API
 //
-// API for the File Storage service. Use this API to manage file systems, mount targets, and snapshots. For more information, see Overview of File Storage (https://docs.cloud.oracle.com/iaas/Content/File/Concepts/filestorageoverview.htm).
+// Use the File Storage service API to manage file systems, mount targets, and snapshots.
+// For more information, see Overview of File Storage (https://docs.cloud.oracle.com/iaas/Content/File/Concepts/filestorageoverview.htm).
 //
 
 package filestorage
@@ -27,6 +28,9 @@ type CreateSnapshotDetails struct {
 	// Avoid entering confidential information.
 	// Example: `Sunday`
 	Name *string `mandatory:"true" json:"name"`
+
+	// The time when this snapshot will be deleted.
+	ExpirationTime *common.SDKTime `mandatory:"false" json:"expirationTime"`
 
 	// Free-form tags for this resource. Each tag is a simple key-value pair
 	//  with no predefined name, type, or namespace.

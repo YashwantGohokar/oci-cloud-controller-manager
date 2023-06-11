@@ -13,7 +13,7 @@ import (
 
 // UpdateVolumeKmsKeyRequest wrapper for the UpdateVolumeKmsKey operation
 //
-// See also
+// # See also
 //
 // Click https://docs.cloud.oracle.com/en-us/iaas/tools/go-sdk-examples/latest/core/UpdateVolumeKmsKey.go.html to see an example of how to use UpdateVolumeKmsKeyRequest.
 type UpdateVolumeKmsKeyRequest struct {
@@ -21,7 +21,7 @@ type UpdateVolumeKmsKeyRequest struct {
 	// The OCID of the volume.
 	VolumeId *string `mandatory:"true" contributesTo:"path" name:"volumeId"`
 
-	// Updates the Key Management master encryption key assigned to the specified volume.
+	// Updates the Vault service master encryption key assigned to the specified volume.
 	UpdateVolumeKmsKeyDetails `contributesTo:"body"`
 
 	// For optimistic concurrency control. In the PUT or DELETE call for a resource, set the `if-match`

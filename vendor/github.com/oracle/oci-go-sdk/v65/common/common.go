@@ -9,7 +9,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-	"path"
+	"path/filepath"
 	"regexp"
 	"strings"
 	"time"
@@ -86,7 +86,7 @@ func (region Region) EndpointForTemplate(service string, serviceEndpointTemplate
 	return endpoint
 }
 
-// EndpointForTemplateDottedRegion returns an endpoint for a service based on the service name and EndpointTemplateForRegionWithDot template. If a service name is missing it is obtained from serviceEndpointTemplate and endpoint is constructed usingEndpointTemplateForRegionWithDot template.
+// EndpointForTemplateDottedRegion returns a endpoint for a service based on the service name and EndpointTemplateForRegionWithDot template. If a service name is missing it is obtained from serviceEndpointTemplate and endpoint is constructed usingEndpointTemplateForRegionWithDot template.
 func (region Region) EndpointForTemplateDottedRegion(service string, serviceEndpointTemplate string, endpointServiceName string) (string, error) {
 	if !strings.Contains(string(region), ".") {
 		var endpoint = ""
@@ -97,6 +97,7 @@ func (region Region) EndpointForTemplateDottedRegion(service string, serviceEndp
 		endpoint = region.EndpointForTemplate(service, "")
 		return endpoint, nil
 	}
+
 	if endpointServiceName != "" {
 		endpoint := strings.Replace(EndpointTemplateForRegionWithDot, "{endpoint_service_name}", endpointServiceName, 1)
 		endpoint = strings.Replace(endpoint, "{region}", string(region), 1)
@@ -243,7 +244,7 @@ func setRegionMetadataFromCfgFile(region *string) bool {
 	// Mark readCfgFile Flag as false since it has already been visited.
 	readCfgFile = false
 	homeFolder := getHomeFolder()
-	configFile := path.Join(homeFolder, regionMetadataCfgDirName, regionMetadataCfgFileName)
+	configFile := filepath.Join(homeFolder, regionMetadataCfgDirName, regionMetadataCfgFileName)
 	if jsonArr, ok := readAndParseConfigFile(&configFile); ok {
 		added := false
 		for _, jsonItem := range jsonArr {

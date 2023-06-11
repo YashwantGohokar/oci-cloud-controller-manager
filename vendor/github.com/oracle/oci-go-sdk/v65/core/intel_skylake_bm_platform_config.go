@@ -22,7 +22,8 @@ import (
 	"strings"
 )
 
-// IntelSkylakeBmPlatformConfig The platform configuration of a bare metal instance that uses the Intel Skylake platform.
+// IntelSkylakeBmPlatformConfig The platform configuration of a bare metal instance that uses one of the following shapes:
+// BM.Standard2.52, BM.GPU2.2, BM.GPU3.8, or BM.DenseIO2.52 (the Intel Skylake platform).
 type IntelSkylakeBmPlatformConfig struct {
 
 	// Whether Secure Boot is enabled on the instance.
@@ -33,6 +34,9 @@ type IntelSkylakeBmPlatformConfig struct {
 
 	// Whether the Measured Boot feature is enabled on the instance.
 	IsMeasuredBootEnabled *bool `mandatory:"false" json:"isMeasuredBootEnabled"`
+
+	// Whether the instance is a confidential instance. If this value is `true`, the instance is a confidential instance. The default value is `false`.
+	IsMemoryEncryptionEnabled *bool `mandatory:"false" json:"isMemoryEncryptionEnabled"`
 }
 
 //GetIsSecureBootEnabled returns IsSecureBootEnabled
@@ -48,6 +52,11 @@ func (m IntelSkylakeBmPlatformConfig) GetIsTrustedPlatformModuleEnabled() *bool 
 //GetIsMeasuredBootEnabled returns IsMeasuredBootEnabled
 func (m IntelSkylakeBmPlatformConfig) GetIsMeasuredBootEnabled() *bool {
 	return m.IsMeasuredBootEnabled
+}
+
+//GetIsMemoryEncryptionEnabled returns IsMemoryEncryptionEnabled
+func (m IntelSkylakeBmPlatformConfig) GetIsMemoryEncryptionEnabled() *bool {
+	return m.IsMemoryEncryptionEnabled
 }
 
 func (m IntelSkylakeBmPlatformConfig) String() string {

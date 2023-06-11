@@ -13,7 +13,7 @@ import (
 
 // ListPoliciesRequest wrapper for the ListPolicies operation
 //
-// See also
+// # See also
 //
 // Click https://docs.cloud.oracle.com/en-us/iaas/tools/go-sdk-examples/latest/loadbalancer/ListPolicies.go.html to see an example of how to use ListPoliciesRequest.
 type ListPoliciesRequest struct {
@@ -86,12 +86,13 @@ type ListPoliciesResponse struct {
 	// A list of []LoadBalancerPolicy instances
 	Items []LoadBalancerPolicy `presentIn:"body"`
 
-	// For list pagination. When this header appears in the response, additional pages of results remain.
-	// For important details about how pagination works, see List Pagination (https://docs.cloud.oracle.com/iaas/Content/API/Concepts/usingapi.htm#nine).
+	// For list pagination. When this header appears in the response, additional pages
+	// of results remain. For important details about how pagination works, see
+	// List Pagination (https://docs.cloud.oracle.com/iaas/Content/API/Concepts/usingapi.htm#nine).
 	OpcNextPage *string `presentIn:"header" name:"opc-next-page"`
 
-	// Unique Oracle-assigned identifier for the request. If you need to contact Oracle about
-	// a particular request, please provide the request ID.
+	// Unique Oracle-assigned identifier for the request. If you need to contact
+	// Oracle about a particular request, please provide the request ID.
 	OpcRequestId *string `presentIn:"header" name:"opc-request-id"`
 }
 

@@ -13,7 +13,7 @@ import (
 
 // UpdateBootVolumeKmsKeyRequest wrapper for the UpdateBootVolumeKmsKey operation
 //
-// See also
+// # See also
 //
 // Click https://docs.cloud.oracle.com/en-us/iaas/tools/go-sdk-examples/latest/core/UpdateBootVolumeKmsKey.go.html to see an example of how to use UpdateBootVolumeKmsKeyRequest.
 type UpdateBootVolumeKmsKeyRequest struct {
@@ -21,7 +21,7 @@ type UpdateBootVolumeKmsKeyRequest struct {
 	// The OCID of the boot volume.
 	BootVolumeId *string `mandatory:"true" contributesTo:"path" name:"bootVolumeId"`
 
-	// Updates the Key Management master encryption key assigned to the specified boot volume.
+	// Updates the Vault service master encryption key assigned to the specified boot volume.
 	UpdateBootVolumeKmsKeyDetails `contributesTo:"body"`
 
 	// For optimistic concurrency control. In the PUT or DELETE call for a resource, set the `if-match`

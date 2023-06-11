@@ -13,7 +13,7 @@ import (
 
 // PostMetricDataRequest wrapper for the PostMetricData operation
 //
-// See also
+// # See also
 //
 // Click https://docs.cloud.oracle.com/en-us/iaas/tools/go-sdk-examples/latest/monitoring/PostMetricData.go.html to see an example of how to use PostMetricDataRequest.
 type PostMetricDataRequest struct {
@@ -24,6 +24,9 @@ type PostMetricDataRequest struct {
 	// Customer part of the request identifier token. If you need to contact Oracle about a particular
 	// request, please provide the complete request ID.
 	OpcRequestId *string `mandatory:"false" contributesTo:"header" name:"opc-request-id"`
+
+	// The optional Content-Encoding header that defines the content encodings that were applied to the payload.
+	ContentEncoding *string `mandatory:"false" contributesTo:"header" name:"content-encoding"`
 
 	// Metadata about the request. This information will not be transmitted to the service, but
 	// represents information that the SDK will consume to drive retry behavior.
