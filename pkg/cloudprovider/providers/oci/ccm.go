@@ -60,6 +60,10 @@ type CloudProvider struct {
 	// we use the node lister to go from IP -> node / provider id -> ... -> subnet
 	NodeLister listersv1.NodeLister
 
+	// ServiceAccountLister provides a cache to lookup Service Accounts to exchange
+	// with Worker Identity which then can be used to communicate with OCI services.
+	ServiceAccountLister listersv1.ServiceAccountLister
+
 	client     client.Interface
 	kubeclient clientset.Interface
 
@@ -175,8 +179,13 @@ func (cp *CloudProvider) Initialize(clientBuilder cloudprovider.ControllerClient
 
 	nodeInformer := factory.Core().V1().Nodes()
 	go nodeInformer.Informer().Run(wait.NeverStop)
+
 	serviceInformer := factory.Core().V1().Services()
 	go serviceInformer.Informer().Run(wait.NeverStop)
+
+	serviceAccountInformer := factory.Core().V1().ServiceAccounts()
+	go serviceAccountInformer.Informer().Run(wait.NeverStop)
+
 	go nodeInfoController.Run(wait.NeverStop)
 
 	cp.logger.Info("Waiting for node informer cache to sync")
@@ -184,6 +193,8 @@ func (cp *CloudProvider) Initialize(clientBuilder cloudprovider.ControllerClient
 		utilruntime.HandleError(fmt.Errorf("Timed out waiting for informers to sync"))
 	}
 	cp.NodeLister = nodeInformer.Lister()
+
+	cp.ServiceAccountLister = serviceAccountInformer.Lister()
 
 	cp.securityListManagerFactory = func(mode string) securityListManager {
 		if cp.config.LoadBalancer.Disabled {
