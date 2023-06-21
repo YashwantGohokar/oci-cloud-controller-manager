@@ -29,6 +29,7 @@ check-env "FSS_VOLUME_HANDLE"       $FSS_VOLUME_HANDLE
 check-env "MNT_TARGET_ID"             $MNT_TARGET_ID
 check-env "MNT_TARGET_SUBNET_ID"      $MNT_TARGET_SUBNET_ID
 check-env "MNT_TARGET_COMPARTMENT_ID" $MNT_TARGET_COMPARTMENT_ID
+check-env "CLUSTER_TYPE"              $CLUSTER_TYPE
 
 function set_image_pull_repo_and_delete_namespace_flag () {
     if [ -z "$IMAGE_PULL_REPO" ]; then
@@ -55,6 +56,7 @@ function run_e2e_tests_existing_cluster() {
         --architecture=${ARCHITECTURE} \
         --volume-handle=${FSS_VOLUME_HANDLE} \
         --static-snapshot-compartment-id=${STATIC_SNAPSHOT_COMPARTMENT_ID}
+        --cluster-type=${CLUSTER_TYPE}
     retval=$?
     return $retval
 }
@@ -95,6 +97,7 @@ echo "CLOUD_CONFIG is ${CLOUD_CONFIG}"
 echo "MNT_TARGET_ID is ${MNT_TARGET_ID}"
 echo "MNT_TARGET_SUBNET_ID is ${MNT_TARGET_SUBNET_ID}"
 echo "MNT_TARGET_COMPARTMENT_ID is ${MNT_TARGET_COMPARTMENT_ID}"
+echo "CLUSTER_TYPE is ${CLUSTER_TYPE}"
 
 function run_tests () {
     set_image_pull_repo_and_delete_namespace_flag
