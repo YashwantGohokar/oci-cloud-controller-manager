@@ -19,7 +19,10 @@ import (
 	"testing"
 	"time"
 
+	authv1 "k8s.io/api/authentication/v1"
+	v1 "k8s.io/api/core/v1"
 	v12 "k8s.io/api/storage/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	"github.com/oracle/oci-cloud-controller-manager/pkg/oci/client"
 	"github.com/oracle/oci-go-sdk/v65/common"
@@ -327,7 +330,7 @@ func (p *MockProvisionerClient) Networking() client.NetworkingInterface {
 }
 
 // Networking mocks client VirtualNetwork implementation.
-func (p *MockProvisionerClient) LoadBalancer(string) client.GenericLoadBalancerInterface {
+func (p *MockProvisionerClient) LoadBalancer(*zap.SugaredLogger, string, string, *authv1.TokenRequest) client.GenericLoadBalancerInterface {
 	return &MockLoadBalancerClient{}
 }
 
