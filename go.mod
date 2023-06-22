@@ -48,7 +48,7 @@ require (
 	github.com/spf13/viper v1.8.1
 	go.uber.org/zap v1.19.1
 	golang.org/x/net v0.0.0-20220403103023-749bd193bc2b
-	golang.org/x/sys v0.0.0-20220406163625-3f8b81556e12 // indirect
+	golang.org/x/sys v0.6.0 // indirect
 	google.golang.org/grpc v1.45.0
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0
 	gopkg.in/yaml.v2 v2.4.0
@@ -68,7 +68,7 @@ require (
 	sigs.k8s.io/sig-storage-lib-external-provisioner/v8 v8.0.0
 )
 
-require github.com/oracle/oci-go-sdk/v65 v65.22.0
+require github.com/oracle/oci-go-sdk/v65 v65.40.1
 
 require (
 	github.com/Azure/go-ansiterm v0.0.0-20210617225240-d185dfc1b5a1 // indirect
