@@ -41,7 +41,7 @@ require (
 	github.com/kubernetes-csi/csi-lib-utils v0.11.0
 	github.com/onsi/ginkgo v1.16.5
 	github.com/onsi/gomega v1.20.1
-	github.com/oracle/oci-go-sdk/v65 v65.2.0
+	github.com/oracle/oci-go-sdk/v65 v65.40.1
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.13.0
 	github.com/spf13/cobra v1.4.0 // indirect
@@ -49,7 +49,7 @@ require (
 	github.com/spf13/viper v1.8.1
 	go.uber.org/zap v1.21.0
 	golang.org/x/net v0.0.0-20220909164309-bea034e7d591
-	golang.org/x/sys v0.0.0-20220919091848-fb04ddd9f9c8 // indirect
+	golang.org/x/sys v0.6.0 // indirect
 	google.golang.org/grpc v1.49.0
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0
 	gopkg.in/yaml.v2 v2.4.0
