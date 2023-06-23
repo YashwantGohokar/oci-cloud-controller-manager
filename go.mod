@@ -39,7 +39,6 @@ require (
 	github.com/container-storage-interface/spec v1.6.0
 	github.com/golang/protobuf v1.5.2
 	github.com/kubernetes-csi/csi-lib-utils v0.11.0
-	github.com/kubernetes-csi/external-resizer v0.0.0-20220615155319-a76b4d2afe86 // v1.5.0
 	github.com/kubernetes-csi/external-snapshotter/client/v6 v6.0.1
 	github.com/onsi/ginkgo v1.16.5
 	github.com/onsi/gomega v1.17.0
@@ -72,7 +71,6 @@ require (
 )
 
 require (
-	github.com/kubernetes-csi/external-snapshotter/v6 v6.0.1
 	github.com/oracle/oci-go-sdk/v65 v65.40.1
 	google.golang.org/protobuf v1.28.0
 	k8s.io/apiextensions-apiserver v0.24.1
