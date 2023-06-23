@@ -17,8 +17,9 @@ package framework
 import (
 	"context"
 	"fmt"
-	ocicore "github.com/oracle/oci-go-sdk/v65/core"
 	"time"
+
+	ocicore "github.com/oracle/oci-go-sdk/v65/core"
 
 	snapshot "github.com/kubernetes-csi/external-snapshotter/client/v6/apis/volumesnapshot/v1"
 	. "github.com/onsi/ginkgo"
@@ -319,10 +320,9 @@ func (j *PVCTestJig) CheckVSContentExists(pvName string) bool {
 func (j *PVCTestJig) CreateVolumeBackup(bs ocicore.BlockstorageClient, adLabel string, compartmentId string, volumeId string, backupName string) *string {
 	request := ocicore.CreateVolumeBackupRequest{
 		CreateVolumeBackupDetails: ocicore.CreateVolumeBackupDetails{
-			VolumeId:      &volumeId,
-			CompartmentId: &compartmentId,
-			DisplayName:   &backupName,
-			Type:          ocicore.CreateVolumeBackupDetailsTypeFull,
+			VolumeId:    &volumeId,
+			DisplayName: &backupName,
+			Type:        ocicore.CreateVolumeBackupDetailsTypeFull,
 		},
 	}
 
