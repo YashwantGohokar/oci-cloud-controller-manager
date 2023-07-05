@@ -386,9 +386,8 @@ func IsFipsEnabled() (string, error) {
 
 	return string(output), nil
 }
-
 func IsInTransitEncryptionPackageInstalled() (bool, error) {
-	args := []string{"-q", "-a", "--root=/host"}
+	args := []string{"-q", InTransitEncryptionPackageName, "--root=/host"}
 	command := exec.Command(RPM_COMMAND, args...)
 	output, err := command.CombinedOutput()
 	if err != nil {
@@ -396,8 +395,8 @@ func IsInTransitEncryptionPackageInstalled() (bool, error) {
 	}
 
 	if len(output) > 0 {
-		list := string(output)
-		if strings.Contains(list, InTransitEncryptionPackageName) {
+		rpmSearchOutput := string(output)
+		if strings.Contains(rpmSearchOutput, InTransitEncryptionPackageName) && !strings.Contains(rpmSearchOutput, "not installed") {
 			return true, nil
 		}
 		return false, nil
