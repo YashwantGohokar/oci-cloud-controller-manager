@@ -235,7 +235,80 @@ func (d *BlockVolumeControllerDriver) CreateVolume(ctx context.Context, req *csi
 	}
 
 	availableDomainShortName := ""
-	if req.AccessibilityRequirements != nil && req.AccessibilityRequirements.Preferred != nil {
+	volumeName := req.Name
+
+	dimensionsMap := make(map[string]string)
+	dimensionsMap[metrics.ResourceOCIDDimension] = volumeName
+
+	srcSnapshotId := ""
+	srcVolumeId := ""
+	volumeContentSource := req.GetVolumeContentSource()
+	if volumeContentSource != nil {
+		_, isVolumeContentSource_Snapshot := volumeContentSource.GetType().(*csi.VolumeContentSource_Snapshot)
+		_, isVolumeContentSource_Volume := volumeContentSource.GetType().(*csi.VolumeContentSource_Volume)
+
+		if !isVolumeContentSource_Snapshot && !isVolumeContentSource_Volume {
+			log.Error("Unsupported volumeContentSource")
+			return nil, status.Error(codes.InvalidArgument, "Unsupported volumeContentSource")
+		}
+
+		if isVolumeContentSource_Snapshot {
+			srcSnapshot := volumeContentSource.GetSnapshot()
+			if srcSnapshot == nil {
+				log.With("volumeSourceType", "snapshot").Error("Error fetching snapshot from the volumeContentSource")
+				return nil, status.Error(codes.InvalidArgument, "Error fetching snapshot from the volumeContentSource")
+			}
+
+			id := srcSnapshot.GetSnapshotId()
+			volumeBackup, err := d.client.BlockStorage().GetVolumeBackup(ctx, id)
+			if err != nil {
+				if k8sapierrors.IsNotFound(err) {
+					log.With("service", "blockstorage", "verb", "get", "resource", "volumeBackup", "statusCode", util.GetHttpStatusCode(err)).Errorf("Failed to get snapshot with ID %v", id)
+					return nil, status.Errorf(codes.NotFound, "Failed to get snapshot with ID %v", id)
+				}
+				log.With("service", "blockstorage", "verb", "get", "resource", "volumeBackup", "statusCode", util.GetHttpStatusCode(err)).Errorf("Failed to fetch snapshot with ID %v with error %v", id, err)
+				return nil, status.Errorf(codes.Internal, "Failed to fetch snapshot with ID %v with error %v", id, err)
+			}
+
+			volumeBackupSize := *volumeBackup.SizeInMBs * client.MiB
+			if volumeBackupSize < size {
+				volumeContext[needResize] = "true"
+				volumeContext[newSize] = strconv.FormatInt(size, 10)
+			}
+
+			srcSnapshotId = id
+		} else {
+			srcVolume := volumeContentSource.GetVolume()
+			if srcVolume == nil {
+				log.With("volumeSourceType", "pvc").Error("Error fetching volume from the volumeContentSource")
+				return nil, status.Error(codes.InvalidArgument, "Error fetching volume from the volumeContentSource")
+			}
+
+			id := srcVolume.GetVolumeId()
+			srcBlockVolume, err := d.client.BlockStorage().GetVolume(ctx, id)
+			if err != nil {
+				if client.IsNotFound(err) {
+					log.With("service", "blockstorage", "verb", "get", "resource", "blockVolume", "statusCode", util.GetHttpStatusCode(err)).Errorf("Failed to get volume with ID %v", id)
+					return nil, status.Errorf(codes.NotFound, "Failed to get volume with ID %v", id)
+				}
+				log.With("service", "blockstorage", "verb", "get", "resource", "blockVolume", "statusCode", util.GetHttpStatusCode(err)).Errorf("Failed to fetch volume with ID %v with error %v", id, err)
+				return nil, status.Errorf(codes.Internal, "Failed to fetch volume with ID %v with error %v", id, err)
+			}
+
+			availableDomainShortName = *srcBlockVolume.AvailabilityDomain
+			log.With("AD", availableDomainShortName).Info("Using availability domain of source volume to provision clone volume.")
+
+			srcBlockVolumeSize := *srcBlockVolume.SizeInMBs * client.MiB
+			if srcBlockVolumeSize < size {
+				volumeContext["needResize"] = "true"
+				volumeContext["newSize"] = strconv.FormatInt(size, 10)
+			}
+
+			srcVolumeId = id
+		}
+	}
+
+	if req.AccessibilityRequirements != nil && req.AccessibilityRequirements.Preferred != nil && availableDomainShortName == "" {
 		for _, t := range req.AccessibilityRequirements.Preferred {
 			availableDomainShortName, _ = t.Segments[kubeAPI.LabelZoneFailureDomain]
 			log.With("AD", availableDomainShortName).Info("Using preferred topology for AD.")
@@ -257,48 +330,14 @@ func (d *BlockVolumeControllerDriver) CreateVolume(ctx context.Context, req *csi
 		}
 	}
 
-	volumeName := req.Name
-
-	dimensionsMap := make(map[string]string)
-	dimensionsMap[metrics.ResourceOCIDDimension] = volumeName
-
-	srcSnapshotId := ""
-	volumeContentSource := req.GetVolumeContentSource()
-	if volumeContentSource != nil {
-		if _, ok := volumeContentSource.GetType().(*csi.VolumeContentSource_Snapshot); !ok {
-			log.Error("Unsupported volumeContentSource")
-			return nil, status.Error(codes.InvalidArgument, "Unsupported volumeContentSource")
-		}
-		srcSnapshot := volumeContentSource.GetSnapshot()
-		if srcSnapshot == nil {
-			log.Error("Error fetching snapshot from the volumeContentSource")
-			return nil, status.Error(codes.InvalidArgument, "Error fetching snapshot from the volumeContentSource")
-		}
-
-		id := srcSnapshot.GetSnapshotId()
-		volumeBackup, err := d.client.BlockStorage().GetVolumeBackup(ctx, id)
-		if err != nil {
-			if k8sapierrors.IsNotFound(err) {
-				log.With("service", "blockstorage", "verb", "get", "resource", "volumeBackup", "statusCode", util.GetHttpStatusCode(err)).Errorf("Failed to get snapshot with ID %v", id)
-				return nil, status.Errorf(codes.NotFound, "Failed to get snapshot with ID %v", id)
-			}
-			log.With("service", "blockstorage", "verb", "get", "resource", "volumeBackup", "statusCode", util.GetHttpStatusCode(err)).Errorf("Failed to fetch snapshot with ID %v with error %v", id, err)
-			return nil, status.Errorf(codes.Internal, "Failed to fetch snapshot with ID %v with error %v", id, err)
-		}
-
-		volumeBackupSize := *volumeBackup.SizeInMBs * client.MiB
-		if volumeBackupSize < size {
-			volumeContext[needResize] = "true"
-			volumeContext[newSize] = strconv.FormatInt(size, 10)
-		}
-
-		srcSnapshotId = id
-	}
-
 	metric := metrics.PVProvision
 	metricType := util.CSIStorageType
 	if srcSnapshotId != "" {
 		metric = metrics.BlockSnapshotRestore
+		metricType = util.CSIStorageType
+	}
+	if srcVolumeId != "" {
+		metric = metrics.PVClone
 		metricType = util.CSIStorageType
 	}
 
@@ -377,7 +416,7 @@ func (d *BlockVolumeControllerDriver) CreateVolume(ctx context.Context, req *csi
 			bvTags = scTags
 		}
 
-		provisionedVolume, err = provision(log, d.client, volumeName, size, *ad.Name, d.config.CompartmentID, srcSnapshotId,
+		provisionedVolume, err = provision(log, d.client, volumeName, size, *ad.Name, d.config.CompartmentID, srcSnapshotId, srcVolumeId,
 			volumeParams.diskEncryptionKey, volumeParams.vpusPerGB, timeout, bvTags)
 		if err != nil {
 			log.With("Ad name", *ad.Name, "Compartment Id", d.config.CompartmentID).With(zap.Error(err)).Error("New volume creation failed.")
@@ -391,7 +430,12 @@ func (d *BlockVolumeControllerDriver) CreateVolume(ctx context.Context, req *csi
 	ctx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
 	log.Info("Waiting for volume to become available.")
-	_, err = d.client.BlockStorage().AwaitVolumeAvailableORTimeout(ctx, *provisionedVolume.Id)
+
+	if srcVolumeId != "" {
+		_, err = d.client.BlockStorage().AwaitVolumeCloneAvailableOrTimeout(ctx, *provisionedVolume.Id)
+	} else {
+		_, err = d.client.BlockStorage().AwaitVolumeAvailableORTimeout(ctx, *provisionedVolume.Id)
+	}
 	if err != nil {
 		log.With("service", "blockstorage", "verb", "get", "resource", "volume", "statusCode", util.GetHttpStatusCode(err)).
 			With("volumeName", volumeName).Error("Create volume failed with time out")
@@ -832,6 +876,7 @@ func (d *BlockVolumeControllerDriver) ControllerGetCapabilities(ctx context.Cont
 		csi.ControllerServiceCapability_RPC_PUBLISH_UNPUBLISH_VOLUME,
 		csi.ControllerServiceCapability_RPC_EXPAND_VOLUME,
 		csi.ControllerServiceCapability_RPC_CREATE_DELETE_SNAPSHOT,
+		csi.ControllerServiceCapability_RPC_CLONE_VOLUME,
 	} {
 		caps = append(caps, newCap(cap))
 	}
@@ -1185,7 +1230,7 @@ func (d *BlockVolumeControllerDriver) ControllerGetVolume(ctx context.Context, r
 }
 
 func provision(log *zap.SugaredLogger, c client.Interface, volName string, volSize int64, availDomainName, compartmentID,
-	backupID, kmsKeyID string, vpusPerGB int64, timeout time.Duration, bvTags *config.TagConfig) (core.Volume, error) {
+	backupID, srcVolumeID, kmsKeyID string, vpusPerGB int64, timeout time.Duration, bvTags *config.TagConfig) (core.Volume, error) {
 
 	ctx := context.Background()
 
@@ -1205,6 +1250,8 @@ func provision(log *zap.SugaredLogger, c client.Interface, volName string, volSi
 
 	if backupID != "" {
 		volumeDetails.SourceDetails = &core.VolumeSourceFromVolumeBackupDetails{Id: &backupID}
+	} else if srcVolumeID != "" {
+		volumeDetails.SourceDetails = &core.VolumeSourceFromVolumeDetails{Id: &srcVolumeID}
 	}
 
 	if kmsKeyID != "" {
