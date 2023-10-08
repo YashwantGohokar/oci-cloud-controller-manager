@@ -23,41 +23,40 @@ import (
 	json "encoding/json"
 	"fmt"
 
-	v1alpha1 "k8s.io/api/resource/v1alpha1"
+	v1alpha2 "k8s.io/api/resource/v1alpha2"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	labels "k8s.io/apimachinery/pkg/labels"
-	schema "k8s.io/apimachinery/pkg/runtime/schema"
 	types "k8s.io/apimachinery/pkg/types"
 	watch "k8s.io/apimachinery/pkg/watch"
-	resourcev1alpha1 "k8s.io/client-go/applyconfigurations/resource/v1alpha1"
+	resourcev1alpha2 "k8s.io/client-go/applyconfigurations/resource/v1alpha2"
 	testing "k8s.io/client-go/testing"
 )
 
 // FakeResourceClaims implements ResourceClaimInterface
 type FakeResourceClaims struct {
-	Fake *FakeResourceV1alpha1
+	Fake *FakeResourceV1alpha2
 	ns   string
 }
 
-var resourceclaimsResource = schema.GroupVersionResource{Group: "resource.k8s.io", Version: "v1alpha1", Resource: "resourceclaims"}
+var resourceclaimsResource = v1alpha2.SchemeGroupVersion.WithResource("resourceclaims")
 
-var resourceclaimsKind = schema.GroupVersionKind{Group: "resource.k8s.io", Version: "v1alpha1", Kind: "ResourceClaim"}
+var resourceclaimsKind = v1alpha2.SchemeGroupVersion.WithKind("ResourceClaim")
 
 // Get takes name of the resourceClaim, and returns the corresponding resourceClaim object, and an error if there is any.
-func (c *FakeResourceClaims) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha1.ResourceClaim, err error) {
+func (c *FakeResourceClaims) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha2.ResourceClaim, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewGetAction(resourceclaimsResource, c.ns, name), &v1alpha1.ResourceClaim{})
+		Invokes(testing.NewGetAction(resourceclaimsResource, c.ns, name), &v1alpha2.ResourceClaim{})
 
 	if obj == nil {
 		return nil, err
 	}
-	return obj.(*v1alpha1.ResourceClaim), err
+	return obj.(*v1alpha2.ResourceClaim), err
 }
 
 // List takes label and field selectors, and returns the list of ResourceClaims that match those selectors.
-func (c *FakeResourceClaims) List(ctx context.Context, opts v1.ListOptions) (result *v1alpha1.ResourceClaimList, err error) {
+func (c *FakeResourceClaims) List(ctx context.Context, opts v1.ListOptions) (result *v1alpha2.ResourceClaimList, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewListAction(resourceclaimsResource, resourceclaimsKind, c.ns, opts), &v1alpha1.ResourceClaimList{})
+		Invokes(testing.NewListAction(resourceclaimsResource, resourceclaimsKind, c.ns, opts), &v1alpha2.ResourceClaimList{})
 
 	if obj == nil {
 		return nil, err
@@ -67,8 +66,8 @@ func (c *FakeResourceClaims) List(ctx context.Context, opts v1.ListOptions) (res
 	if label == nil {
 		label = labels.Everything()
 	}
-	list := &v1alpha1.ResourceClaimList{ListMeta: obj.(*v1alpha1.ResourceClaimList).ListMeta}
-	for _, item := range obj.(*v1alpha1.ResourceClaimList).Items {
+	list := &v1alpha2.ResourceClaimList{ListMeta: obj.(*v1alpha2.ResourceClaimList).ListMeta}
+	for _, item := range obj.(*v1alpha2.ResourceClaimList).Items {
 		if label.Matches(labels.Set(item.Labels)) {
 			list.Items = append(list.Items, item)
 		}
@@ -84,43 +83,43 @@ func (c *FakeResourceClaims) Watch(ctx context.Context, opts v1.ListOptions) (wa
 }
 
 // Create takes the representation of a resourceClaim and creates it.  Returns the server's representation of the resourceClaim, and an error, if there is any.
-func (c *FakeResourceClaims) Create(ctx context.Context, resourceClaim *v1alpha1.ResourceClaim, opts v1.CreateOptions) (result *v1alpha1.ResourceClaim, err error) {
+func (c *FakeResourceClaims) Create(ctx context.Context, resourceClaim *v1alpha2.ResourceClaim, opts v1.CreateOptions) (result *v1alpha2.ResourceClaim, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewCreateAction(resourceclaimsResource, c.ns, resourceClaim), &v1alpha1.ResourceClaim{})
+		Invokes(testing.NewCreateAction(resourceclaimsResource, c.ns, resourceClaim), &v1alpha2.ResourceClaim{})
 
 	if obj == nil {
 		return nil, err
 	}
-	return obj.(*v1alpha1.ResourceClaim), err
+	return obj.(*v1alpha2.ResourceClaim), err
 }
 
 // Update takes the representation of a resourceClaim and updates it. Returns the server's representation of the resourceClaim, and an error, if there is any.
-func (c *FakeResourceClaims) Update(ctx context.Context, resourceClaim *v1alpha1.ResourceClaim, opts v1.UpdateOptions) (result *v1alpha1.ResourceClaim, err error) {
+func (c *FakeResourceClaims) Update(ctx context.Context, resourceClaim *v1alpha2.ResourceClaim, opts v1.UpdateOptions) (result *v1alpha2.ResourceClaim, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewUpdateAction(resourceclaimsResource, c.ns, resourceClaim), &v1alpha1.ResourceClaim{})
+		Invokes(testing.NewUpdateAction(resourceclaimsResource, c.ns, resourceClaim), &v1alpha2.ResourceClaim{})
 
 	if obj == nil {
 		return nil, err
 	}
-	return obj.(*v1alpha1.ResourceClaim), err
+	return obj.(*v1alpha2.ResourceClaim), err
 }
 
 // UpdateStatus was generated because the type contains a Status member.
 // Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-func (c *FakeResourceClaims) UpdateStatus(ctx context.Context, resourceClaim *v1alpha1.ResourceClaim, opts v1.UpdateOptions) (*v1alpha1.ResourceClaim, error) {
+func (c *FakeResourceClaims) UpdateStatus(ctx context.Context, resourceClaim *v1alpha2.ResourceClaim, opts v1.UpdateOptions) (*v1alpha2.ResourceClaim, error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewUpdateSubresourceAction(resourceclaimsResource, "status", c.ns, resourceClaim), &v1alpha1.ResourceClaim{})
+		Invokes(testing.NewUpdateSubresourceAction(resourceclaimsResource, "status", c.ns, resourceClaim), &v1alpha2.ResourceClaim{})
 
 	if obj == nil {
 		return nil, err
 	}
-	return obj.(*v1alpha1.ResourceClaim), err
+	return obj.(*v1alpha2.ResourceClaim), err
 }
 
 // Delete takes name of the resourceClaim and deletes it. Returns an error if one occurs.
 func (c *FakeResourceClaims) Delete(ctx context.Context, name string, opts v1.DeleteOptions) error {
 	_, err := c.Fake.
-		Invokes(testing.NewDeleteActionWithOptions(resourceclaimsResource, c.ns, name, opts), &v1alpha1.ResourceClaim{})
+		Invokes(testing.NewDeleteActionWithOptions(resourceclaimsResource, c.ns, name, opts), &v1alpha2.ResourceClaim{})
 
 	return err
 }
@@ -129,23 +128,23 @@ func (c *FakeResourceClaims) Delete(ctx context.Context, name string, opts v1.De
 func (c *FakeResourceClaims) DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error {
 	action := testing.NewDeleteCollectionAction(resourceclaimsResource, c.ns, listOpts)
 
-	_, err := c.Fake.Invokes(action, &v1alpha1.ResourceClaimList{})
+	_, err := c.Fake.Invokes(action, &v1alpha2.ResourceClaimList{})
 	return err
 }
 
 // Patch applies the patch and returns the patched resourceClaim.
-func (c *FakeResourceClaims) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.ResourceClaim, err error) {
+func (c *FakeResourceClaims) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha2.ResourceClaim, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewPatchSubresourceAction(resourceclaimsResource, c.ns, name, pt, data, subresources...), &v1alpha1.ResourceClaim{})
+		Invokes(testing.NewPatchSubresourceAction(resourceclaimsResource, c.ns, name, pt, data, subresources...), &v1alpha2.ResourceClaim{})
 
 	if obj == nil {
 		return nil, err
 	}
-	return obj.(*v1alpha1.ResourceClaim), err
+	return obj.(*v1alpha2.ResourceClaim), err
 }
 
 // Apply takes the given apply declarative configuration, applies it and returns the applied resourceClaim.
-func (c *FakeResourceClaims) Apply(ctx context.Context, resourceClaim *resourcev1alpha1.ResourceClaimApplyConfiguration, opts v1.ApplyOptions) (result *v1alpha1.ResourceClaim, err error) {
+func (c *FakeResourceClaims) Apply(ctx context.Context, resourceClaim *resourcev1alpha2.ResourceClaimApplyConfiguration, opts v1.ApplyOptions) (result *v1alpha2.ResourceClaim, err error) {
 	if resourceClaim == nil {
 		return nil, fmt.Errorf("resourceClaim provided to Apply must not be nil")
 	}
@@ -158,17 +157,17 @@ func (c *FakeResourceClaims) Apply(ctx context.Context, resourceClaim *resourcev
 		return nil, fmt.Errorf("resourceClaim.Name must be provided to Apply")
 	}
 	obj, err := c.Fake.
-		Invokes(testing.NewPatchSubresourceAction(resourceclaimsResource, c.ns, *name, types.ApplyPatchType, data), &v1alpha1.ResourceClaim{})
+		Invokes(testing.NewPatchSubresourceAction(resourceclaimsResource, c.ns, *name, types.ApplyPatchType, data), &v1alpha2.ResourceClaim{})
 
 	if obj == nil {
 		return nil, err
 	}
-	return obj.(*v1alpha1.ResourceClaim), err
+	return obj.(*v1alpha2.ResourceClaim), err
 }
 
 // ApplyStatus was generated because the type contains a Status member.
 // Add a +genclient:noStatus comment above the type to avoid generating ApplyStatus().
-func (c *FakeResourceClaims) ApplyStatus(ctx context.Context, resourceClaim *resourcev1alpha1.ResourceClaimApplyConfiguration, opts v1.ApplyOptions) (result *v1alpha1.ResourceClaim, err error) {
+func (c *FakeResourceClaims) ApplyStatus(ctx context.Context, resourceClaim *resourcev1alpha2.ResourceClaimApplyConfiguration, opts v1.ApplyOptions) (result *v1alpha2.ResourceClaim, err error) {
 	if resourceClaim == nil {
 		return nil, fmt.Errorf("resourceClaim provided to Apply must not be nil")
 	}
@@ -181,10 +180,10 @@ func (c *FakeResourceClaims) ApplyStatus(ctx context.Context, resourceClaim *res
 		return nil, fmt.Errorf("resourceClaim.Name must be provided to Apply")
 	}
 	obj, err := c.Fake.
-		Invokes(testing.NewPatchSubresourceAction(resourceclaimsResource, c.ns, *name, types.ApplyPatchType, data, "status"), &v1alpha1.ResourceClaim{})
+		Invokes(testing.NewPatchSubresourceAction(resourceclaimsResource, c.ns, *name, types.ApplyPatchType, data, "status"), &v1alpha2.ResourceClaim{})
 
 	if obj == nil {
 		return nil, err
 	}
-	return obj.(*v1alpha1.ResourceClaim), err
+	return obj.(*v1alpha2.ResourceClaim), err
 }

@@ -21,26 +21,26 @@ package fake
 import (
 	"context"
 
-	v1alpha1 "k8s.io/api/authentication/v1alpha1"
+	v1beta1 "k8s.io/api/authentication/v1beta1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	testing "k8s.io/client-go/testing"
 )
 
 // FakeSelfSubjectReviews implements SelfSubjectReviewInterface
 type FakeSelfSubjectReviews struct {
-	Fake *FakeAuthenticationV1alpha1
+	Fake *FakeAuthenticationV1beta1
 }
 
-var selfsubjectreviewsResource = v1alpha1.SchemeGroupVersion.WithResource("selfsubjectreviews")
+var selfsubjectreviewsResource = v1beta1.SchemeGroupVersion.WithResource("selfsubjectreviews")
 
-var selfsubjectreviewsKind = v1alpha1.SchemeGroupVersion.WithKind("SelfSubjectReview")
+var selfsubjectreviewsKind = v1beta1.SchemeGroupVersion.WithKind("SelfSubjectReview")
 
 // Create takes the representation of a selfSubjectReview and creates it.  Returns the server's representation of the selfSubjectReview, and an error, if there is any.
-func (c *FakeSelfSubjectReviews) Create(ctx context.Context, selfSubjectReview *v1alpha1.SelfSubjectReview, opts v1.CreateOptions) (result *v1alpha1.SelfSubjectReview, err error) {
+func (c *FakeSelfSubjectReviews) Create(ctx context.Context, selfSubjectReview *v1beta1.SelfSubjectReview, opts v1.CreateOptions) (result *v1beta1.SelfSubjectReview, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewRootCreateAction(selfsubjectreviewsResource, selfSubjectReview), &v1alpha1.SelfSubjectReview{})
+		Invokes(testing.NewRootCreateAction(selfsubjectreviewsResource, selfSubjectReview), &v1beta1.SelfSubjectReview{})
 	if obj == nil {
 		return nil, err
 	}
-	return obj.(*v1alpha1.SelfSubjectReview), err
+	return obj.(*v1beta1.SelfSubjectReview), err
 }

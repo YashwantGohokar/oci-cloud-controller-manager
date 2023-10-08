@@ -44,13 +44,12 @@ require (
 	github.com/kubernetes-csi/external-snapshotter/client/v6 v6.2.0
 	github.com/onsi/ginkgo v1.16.5
 	github.com/onsi/gomega v1.27.7
-	github.com/oracle/oci-go-sdk/v65 v65.40.1
+	github.com/oracle/oci-go-sdk/v65 v65.49.2
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.15.1
 	github.com/spf13/cobra v1.6.1 // indirect
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.8.1
-	github.com/stretchr/testify v1.8.2 // indirect
 	go.uber.org/zap v1.24.0
 	golang.org/x/net v0.10.0
 	golang.org/x/sys v0.8.0 // indirect
@@ -76,6 +75,7 @@ require (
 )
 
 require (
+	golang.org/x/sync v0.2.0
 	google.golang.org/protobuf v1.30.0
 	k8s.io/apiextensions-apiserver v0.27.2
 )
@@ -160,7 +160,6 @@ require (
 	golang.org/x/crypto v0.1.0 // indirect
 	golang.org/x/mod v0.10.0 // indirect
 	golang.org/x/oauth2 v0.5.0 // indirect
-	golang.org/x/sync v0.2.0 // indirect
 	golang.org/x/term v0.8.0 // indirect
 	golang.org/x/text v0.9.0 // indirect
 	golang.org/x/time v0.3.0 // indirect

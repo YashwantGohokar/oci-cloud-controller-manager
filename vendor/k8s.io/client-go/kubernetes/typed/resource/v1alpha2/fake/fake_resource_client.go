@@ -19,34 +19,34 @@ limitations under the License.
 package fake
 
 import (
-	v1alpha1 "k8s.io/client-go/kubernetes/typed/resource/v1alpha1"
+	v1alpha2 "k8s.io/client-go/kubernetes/typed/resource/v1alpha2"
 	rest "k8s.io/client-go/rest"
 	testing "k8s.io/client-go/testing"
 )
 
-type FakeResourceV1alpha1 struct {
+type FakeResourceV1alpha2 struct {
 	*testing.Fake
 }
 
-func (c *FakeResourceV1alpha1) PodSchedulings(namespace string) v1alpha1.PodSchedulingInterface {
-	return &FakePodSchedulings{c, namespace}
+func (c *FakeResourceV1alpha2) PodSchedulingContexts(namespace string) v1alpha2.PodSchedulingContextInterface {
+	return &FakePodSchedulingContexts{c, namespace}
 }
 
-func (c *FakeResourceV1alpha1) ResourceClaims(namespace string) v1alpha1.ResourceClaimInterface {
+func (c *FakeResourceV1alpha2) ResourceClaims(namespace string) v1alpha2.ResourceClaimInterface {
 	return &FakeResourceClaims{c, namespace}
 }
 
-func (c *FakeResourceV1alpha1) ResourceClaimTemplates(namespace string) v1alpha1.ResourceClaimTemplateInterface {
+func (c *FakeResourceV1alpha2) ResourceClaimTemplates(namespace string) v1alpha2.ResourceClaimTemplateInterface {
 	return &FakeResourceClaimTemplates{c, namespace}
 }
 
-func (c *FakeResourceV1alpha1) ResourceClasses() v1alpha1.ResourceClassInterface {
+func (c *FakeResourceV1alpha2) ResourceClasses() v1alpha2.ResourceClassInterface {
 	return &FakeResourceClasses{c}
 }
 
 // RESTClient returns a RESTClient that is used to communicate
 // with API server by this client implementation.
-func (c *FakeResourceV1alpha1) RESTClient() rest.Interface {
+func (c *FakeResourceV1alpha2) RESTClient() rest.Interface {
 	var ret *rest.RESTClient
 	return ret
 }
