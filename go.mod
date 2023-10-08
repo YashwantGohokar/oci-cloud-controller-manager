@@ -38,52 +38,46 @@ replace (
 
 require (
 	github.com/container-storage-interface/spec v1.8.0
-	github.com/go-logr/zapr v1.2.4
+	github.com/go-logr/zapr v1.2.4 // indirect
 	github.com/golang/protobuf v1.5.3
 	github.com/kubernetes-csi/csi-lib-utils v0.13.0
-	github.com/kubernetes-csi/external-attacher v0.0.0-20230426174214-910cd35d72e6 //v4.3.0
-	github.com/kubernetes-csi/external-provisioner v0.0.0-20230425235215-ab68435fa238 // v3.5.0
-	github.com/kubernetes-csi/external-resizer v0.0.0-20230427181816-990c87e85d9d // v1.8.0
 	github.com/kubernetes-csi/external-snapshotter/client/v6 v6.2.0
 	github.com/onsi/ginkgo v1.16.5
 	github.com/onsi/gomega v1.27.7
 	github.com/oracle/oci-go-sdk/v65 v65.40.1
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.15.1
-	github.com/spf13/cobra v1.6.1
+	github.com/spf13/cobra v1.6.1 // indirect
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.8.1
-	github.com/stretchr/testify v1.8.2
+	github.com/stretchr/testify v1.8.2 // indirect
 	go.uber.org/zap v1.24.0
 	golang.org/x/net v0.10.0
-	golang.org/x/sys v0.8.0
+	golang.org/x/sys v0.8.0 // indirect
 	google.golang.org/grpc v1.54.0
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0
 	gopkg.in/yaml.v2 v2.4.0
 	k8s.io/api v0.27.2
 	k8s.io/apimachinery v0.27.2
-	k8s.io/apiserver v0.27.2
+	k8s.io/apiserver v0.27.2 // indirect
 	k8s.io/client-go v0.27.2
 	k8s.io/cloud-provider v0.27.2
 	k8s.io/component-base v0.27.2
 	k8s.io/component-helpers v0.27.2
-	k8s.io/controller-manager v0.27.2
-	k8s.io/csi-translation-lib v0.27.2
+	k8s.io/controller-manager v0.27.2 // indirect
+	k8s.io/csi-translation-lib v0.27.2 // indirect
 	k8s.io/klog v1.0.0
 	k8s.io/klog/v2 v2.90.1
-	k8s.io/kubelet v0.27.2
+	k8s.io/kubelet v0.27.2 // indirect
 	k8s.io/kubernetes v1.27.2
 	k8s.io/mount-utils v0.27.2
 	k8s.io/utils v0.0.0-20230209194617-a36077c30491
-	sigs.k8s.io/controller-runtime v0.15.0
 	sigs.k8s.io/sig-storage-lib-external-provisioner/v9 v9.0.2
 )
 
 require (
-	github.com/kubernetes-csi/external-snapshotter/v6 v6.2.0
 	google.golang.org/protobuf v1.30.0
 	k8s.io/apiextensions-apiserver v0.27.2
-	sigs.k8s.io/gateway-api v0.6.2
 )
 
 require (
@@ -104,7 +98,6 @@ require (
 	github.com/evanphx/json-patch v5.6.0+incompatible // indirect
 	github.com/felixge/httpsnoop v1.0.3 // indirect
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
-	github.com/go-kit/kit v0.10.0 // indirect
 	github.com/go-logr/logr v1.2.4 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-openapi/jsonpointer v0.19.6 // indirect
@@ -137,15 +130,12 @@ require (
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/nxadm/tail v1.4.8 // indirect
-	github.com/onsi/ginkgo/v2 v2.6.0 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/selinux v1.10.0 // indirect
 	github.com/pelletier/go-toml v1.9.3 // indirect
-	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/prometheus/client_model v0.4.0 // indirect
 	github.com/prometheus/common v0.42.0 // indirect
 	github.com/prometheus/procfs v0.9.0 // indirect
-	github.com/sirupsen/logrus v1.9.0 // indirect
 	github.com/sony/gobreaker v0.5.0 // indirect
 	github.com/spf13/afero v1.6.0 // indirect
 	github.com/spf13/cast v1.3.1 // indirect
@@ -175,7 +165,6 @@ require (
 	golang.org/x/text v0.9.0 // indirect
 	golang.org/x/time v0.3.0 // indirect
 	golang.org/x/tools v0.9.1 // indirect
-	gomodules.xyz/jsonpatch/v2 v2.3.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto v0.0.0-20230110181048-76db0878b65f // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
