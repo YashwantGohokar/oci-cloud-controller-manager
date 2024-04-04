@@ -79,7 +79,7 @@ spec:
   storageClassName: "oci"
   selector:
     matchLabels:
-      failure-domain.beta.kubernetes.io/zone: "PHX-AD-1"
+      topology.kubernetes.io/zone: "PHX-AD-1"
   accessModes:
     - ReadWriteOnce
   resources:
@@ -128,7 +128,7 @@ spec:
   storageClassName: "oci"
   selector:
     matchLabels:
-      failure-domain.beta.kubernetes.io/zone: "PHX-AD-1"
+      topology.kubernetes.io/zone: "PHX-AD-1"
   accessModes:
     - ReadWriteOnce
   resources:
