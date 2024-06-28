@@ -1,6 +1,6 @@
 ARG CI_IMAGE_REGISTRY
 
-FROM golang:1.20.4 as builder
+FROM golang:1.21.5 as builder
 
 ARG COMPONENT
 
@@ -18,6 +18,7 @@ FROM arm64v8/oraclelinux:7-slim
 
 RUN yum install -y util-linux \
   && yum install -y e2fsprogs \
+  && yum install -y xfsprogs \
   && yum clean all
  \
 
