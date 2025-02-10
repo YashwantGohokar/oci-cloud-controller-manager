@@ -15,7 +15,6 @@
 package oci
 
 import (
-	"fmt"
 	"os"
 	"reflect"
 	"testing"
